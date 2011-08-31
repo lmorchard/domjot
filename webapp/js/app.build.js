@@ -7,7 +7,7 @@
     //optimize: "none",
     modules: [
         {
-            name: "main",
+            name: "domjot",
         }
     ]
 })
