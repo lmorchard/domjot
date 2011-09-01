@@ -2,7 +2,13 @@
 require(["jquery", "domjot"], function ($, domjot) {
     
     window.domjot = domjot;
-    window.nc = new domjot.models.NoteCollection(); 
-    nc.fetch();
+
+    domjot.models.notes.fetch({
+        success: function () {
+            $('article.domjot > section').each(function () { 
+                domjot.views.NoteView.get($(this)).enableControls(); 
+            });
+        }
+    });
     
 });

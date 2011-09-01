@@ -1,4 +1,6 @@
 /**
  * domjot CSS
  */
-
+header, footer, aside, nav, article {  
+    display: block;  
+}

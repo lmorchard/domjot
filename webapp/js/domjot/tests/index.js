@@ -4,9 +4,30 @@
 require(["jquery", "domjot"], function ($, domjot) {
     QUnit.init();
 
-    var coll = new domjot.models.NoteCollection();
+    window.domjot = domjot;
+
+    var coll = domjot.models.notes;
+
+    // Make lots of noise on all collection and model events
     coll.bind("all", function (event_name) {
         console.log("COLL EVENT " + event_name);
+        console.log(arguments);
+    });
+    coll.bind("reset", function () {
+        coll.each(function (model, idx) {
+            model.bind("all", function (event_name) {
+                console.log("MODEL EVENT " + event_name);
+                console.log(arguments);
+            });
+        });
+        console.log("COLL RESET");
+        console.log(arguments);
+    });
+    coll.bind("add", function (model, collection, options) {
+        model.bind("all", function (event_name) {
+            console.log("MODEL EVENT " + event_name);
+            console.log(arguments);
+        });
     });
 
     test('DOM sections should appear as Notes in NoteCollection', function () {
@@ -25,11 +46,73 @@ require(["jquery", "domjot"], function ($, domjot) {
                     var section = $('article > section[id="'+note.id+'"]');
                     equals(section.length, 1,
                         "There should be a section matching "+note.id);
-                    equals(note.get('title'), section.find('header > h2').text(),
+                    equals(note.get('title'), section.find('hgroup > h2').text(),
                         "Note title should match section title");
                 });
             }
         ]);
+    });
+
+    test('Changing Notes should result in DOM section changes', function () {
+
+        var test_data = [
+            ['note-0', { 
+                'title': 'Note #1 for testing',
+                'body': '<p><b>First edited note</b></p>'
+            }],
+            ['note-1', {
+                'title': 'Note #3 for testing',
+                'body': '<p><b>Third edited note</b></p>'
+            }],
+            ['note-2', {
+                'title': 'Note #4 for testing',
+                'body': '<p><b>Fourth edited note</b></p>'
+            }]
+        ];
+
+        async.series([
+            function (next) {
+                stop(100);
+                coll.fetch({
+                    success: function () { next(); }
+                });
+            },
+            function (next) {
+                start(); stop(100);
+                async.forEach(test_data, function (item, fe_next) {
+                    var note_id = item[0], 
+                        data = item[1], 
+                        note = coll.get(note_id);
+                    note.save(data, {
+                        success: function () { fe_next(); }
+                    });
+                }, function (err) {
+                    next(err);
+                });
+            },
+            function (next) {
+                start(); stop(100);
+                coll.fetch({
+                    success: function () { next(); }
+                });
+            },
+            function (next) {
+                start();
+                for (var i=0,item; item=test_data[i]; i++) {
+                    var note_id = item[0], 
+                        data = item[1], 
+                        note = coll.get(note_id),
+                        section = $('article > section[id="'+note.id+'"]');
+                    equals(section.length, 1,
+                        "There should be a section matching "+note.id);
+                    equals(data['title'], note.get('title'),
+                        "Note title should match section title");
+                    equals(note.get('title'), section.find('hgroup > h2').text(),
+                        "Note title should match section title");
+                }
+            }
+        ]);
+    
     });
 
     test('Creating Notes should result in new DOM sections', function () {
@@ -57,13 +140,12 @@ require(["jquery", "domjot"], function ($, domjot) {
                         }
                     });
                 }, function (err, results) { 
-                    start();
                     new_notes = results;
                     next();
                 });
             },
             function (next) {
-                stop(100);
+                start(); stop(100);
                 coll.fetch({
                     success: function () { next(); }
                 });
@@ -74,7 +156,7 @@ require(["jquery", "domjot"], function ($, domjot) {
                     var section = $('article > section[id="'+note.id+'"]');
                     equals(section.length, 1,
                         "There should be a section matching "+note.id);
-                    equals(note.get('title'), section.find('header > h2').text(),
+                    equals(note.get('title'), section.find('hgroup > h2').text(),
                         "Note title should match section title");
                 }
             }

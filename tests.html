@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>DOMjot playground</title>
+        <title>DOMjot tests</title>
 
         <link rel="stylesheet" type="text/css" media="screen"
             href="webapp/js/domjot/tests/qunit/qunit.css" />  
@@ -23,7 +23,7 @@
     <body>
 
         <div class="qunit">
-            <h1 id="qunit-header">QUnit Test Suite</h1>
+            <h1 id="qunit-hgroup">QUnit Test Suite</h1>
             <h2 id="qunit-banner"></h2>
             <div id="qunit-testrunner-toolbar"></div>
             <h2 id="qunit-userAgent"></h2>
@@ -31,12 +31,12 @@
         </div>
 
         <!-- <article id="qunit-fixture"> -->
-        <article>
+        <article class="domjot">
 
             <h1>DOMjot tests</h1>
 
             <section>
-                <header><h2>Test note #1</h2></header>
+                <hgroup><h2>Test note #1</h2></hgroup>
                 <div class="body">
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Quisque lorem augue, faucibus ut congue et, sollicitudin eu
@@ -47,12 +47,10 @@
                     sodales eu condimentum nec, sodales ac diam. Mauris ut
                     lorem nec lacus iaculis porttitor in a enim.</p>
                 </div>
-                <footer>
-                </footer>
             </section>
 
             <section id="i-have-an-id-already">
-                <header><h2>Test note #2</h2></header>
+                <hgroup><h2>Test note #2</h2></hgroup>
                 <div class="body">
                     <p>Phasellus a libero tellus. Proin gravida, enim vel
                     consectetur pulvinar, mi metus sodales sem, et porta metus
@@ -61,12 +59,10 @@
                     turpis scelerisque eleifend. Etiam non nunc cursus mi
                     blandit porta.</p> 
                 </div>
-                <footer>
-                </footer>
             </section>
 
             <section>
-                <header><h2>Test note #3</h2></header>
+                <hgroup><h2>Test note #3</h2></hgroup>
                 <div class="body">
                     <p>Duis nec magna ac ante interdum ultricies ut vitae
                     nulla. Nunc ultricies ullamcorper lectus, porta ultrices
@@ -80,12 +76,10 @@
                     augue, vitae convallis dolor. Ut a risus non quam dapibus
                     aliquet.</p> 
                 </div>
-                <footer>
-                </footer>
             </section>
 
             <section>
-                <header><h2>Test note #4</h2></header>
+                <hgroup><h2>Test note #4</h2></hgroup>
                 <div class="body">
                     <p>Donec dictum, augue ac vehicula adipiscing, nulla
                     mauris euismod nisl, consequat ornare elit arcu ac leo.
@@ -95,8 +89,6 @@
                     nisl nunc, tempor nec varius ut, accumsan ut dolor. Nulla
                     facilisi.</p>
                 </div>
-                <footer>
-                </footer>
             </section>
 
         </article>

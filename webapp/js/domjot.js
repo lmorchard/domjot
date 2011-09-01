@@ -1,9 +1,13 @@
 //
 // ## domjot main package
 //
-define(["domjot/utils", "domjot/models"], function(domjot_utils, domjot_model) {
+define(["domjot/utils", "domjot/models", "domjot/views", "domjot/controllers"], 
+        function(utils, models, views, controllers) {
+
     return {
-        utils: domjot_utils,
-        models: domjot_model
+        utils: utils,
+        models: models,
+        views: views,
+        controllers: controllers
     };
 });

@@ -1,39 +1,31 @@
 //
 // ## domjot models
 //
-define(["jquery", "backbone", "underscore", "async", 
-        "domjot/utils", "domjot/models/sync"], 
-       function ($, i1, i2, i3, utils, sync) {
-
-    // ### Base model for domjot models
-    var BaseModel = Backbone.Model.extend({
-        uid: function () {
-            return 'obj-' + utils.uid();
-        }
-    });
-
-    // ### Base collection for domjot models
-    var BaseCollection = Backbone.Collection.extend({
-    });
+define(["backbone", "underscore", "async", "domjot/utils", "domjot/models/sync"], 
+        function (i1, i2, i3, utils, sync) {
 
     // ### Note model
-    var Note = BaseModel.extend({
-        sync: sync.dom.NoteCollectionDOMSync,
-        uid: function () {
-            return 'note-' + utils.uid();
-        },
+    var Note = Backbone.Model.extend({
+        
         // #### Blank HTML note template
         DOM_TMPL: ['',
             '<section class="note">',
-            '<header><h2></h2></header>',
-            '<div class="body"></div>',
-            '<footer></footer>',
+                '<hgroup><h2></h2></hgroup>',
+                '<div class="body"></div>',
             '</section>',
-        ''].join("\n")
+        ''].join("\n"),
+
+        sync: sync.dom.NoteCollectionDOMSync,
+        
+        uid: function () {
+            // TODO: Make sure the uid isn't already attached to a note;
+            // re-generate if found.
+            return _.uniqueId('note-');
+        }
     });
 
     // ### Collection of domjot Notes
-    var NoteCollection = BaseCollection.extend({
+    var NoteCollection = Backbone.Collection.extend({
         sync: sync.dom.NoteCollectionDOMSync,
         url: "notes",
         model: Note
@@ -41,7 +33,8 @@ define(["jquery", "backbone", "underscore", "async",
 
     return {
         Note: Note, 
-        NoteCollection: NoteCollection
+        NoteCollection: NoteCollection,
+        notes: new NoteCollection()
     };
 
 });
