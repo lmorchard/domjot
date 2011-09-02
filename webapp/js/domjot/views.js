@@ -1,8 +1,10 @@
 //
 // ## domjot views
 //
-define(["jquery", "backbone", "underscore", "async", "domjot/utils", "require"], 
-        function ($, i1, i2, i3, utils, require) {
+define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
+        "extlib/async", "domjot/utils", "require"], 
+        function (i0, i1, i2, i3, utils, require) {
+    var $ = jQuery;
 
     var NOTE_KEY = "NoteView";
 
@@ -11,7 +13,7 @@ define(["jquery", "backbone", "underscore", "async", "domjot/utils", "require"],
 
         tagName: 'section', className: 'note',
         events: {
-            "click .action-edit": "revealEditor"
+            "click .edit": "revealEditor"
         },
 
         // #### Update the DOM for a note
@@ -38,7 +40,7 @@ define(["jquery", "backbone", "underscore", "async", "domjot/utils", "require"],
 
         // #### Enable controls for the note
         enableControls: function () {
-            if (this.$('nav.controls').length == 0) {
+            if (this.$('nav.controls').length === 0) {
                 this.$('hgroup').after(NoteView.CONTROLS_TMPL);
                 this.delegateEvents();
             }
@@ -56,7 +58,7 @@ define(["jquery", "backbone", "underscore", "async", "domjot/utils", "require"],
         // #### Empty DOM template for note controls
         CONTROLS_TMPL: ['',
             '<nav class="controls"><ul>',
-                '<li><a href="#" class="action-edit">Edit</a></li>',
+                '<li><button class="edit">Edit</button></li>',
             '</ul></nav>',
         ''].join("\n"),
 
@@ -89,12 +91,22 @@ define(["jquery", "backbone", "underscore", "async", "domjot/utils", "require"],
         tagName: 'div', className: 'note-editor',
 
         events: {
-            "click button[name=save]": "commit"
+            "click button.save": "commit",
+            "click button.cancel": "close",
+            "click button.delete": "del"
+        },
+
+        initialize: function () {
+            this.confirm_delete = true;
         },
         
         // #### Update the editor fields from the related model.
         render: function () {
-            $(this.el).html(NoteEditorView.EDITOR_TMPL);
+            $(this.el)
+                .data('view', this)
+                .attr('data-model-id', this.model.id)
+                .html(NoteEditorView.EDITOR_TMPL);
+            
             this.$('h2').text(this.model.get('title'));
             this.$('*[name=title]').val(this.model.get('title'));
             this.$('*[name=body]').val(this.model.get('body'));
@@ -105,25 +117,51 @@ define(["jquery", "backbone", "underscore", "async", "domjot/utils", "require"],
         serialize: function () {
             return {
                 title: this.$('*[name=title]').val(),
-                body: this.$('*[name=body]').val(),
+                body: this.$('*[name=body]').val()
+            };
+        },
+
+        // #### Close the editor, reveal the underlying note view.
+        close: function () {
+            var editor_el = $(this.el),
+                display_view = NoteView.get(this.model.id);
+            editor_el.remove();
+            if (display_view) {
+                $(display_view.el).show();
             }
+            return false; 
         },
 
         // #### Commit the state of the editor to the related model.
         commit: function () {
-            var data = this.serialize(),
-                editor_el = $(this.el),
-                model = this.model,
-                display_view = NoteView.get(model.id);
+            var that = this,
+                data = this.serialize();
             this.model.save(data, {
                 success: function (model, resp) {
-                    editor_el.remove();
-                    $(display_view.el).show();
+                    that.close();
                 },
                 error: function (model, resp, options) {
                 }
             });
             return false;
+        },
+
+        // #### Delete the underlying note
+        del: function () {
+            var that = this;
+            var result = (!this.confirm_delete) ? true :
+                window.confirm("Are you sure you want to delete "+
+                               "'"+this.model.get('title')+"'?");
+            if (result) {
+                this.model.destroy({
+                    success: function (model, resp) {
+                        that.close();
+                    },
+                    error: function (model, resp, options) {
+                    }
+                });
+            }
+            return false; 
         }
 
     }, {
@@ -138,11 +176,14 @@ define(["jquery", "backbone", "underscore", "async", "domjot/utils", "require"],
                         '<input type="text" name="title" size="50" /></li>',
                     '<li class="field"><label>Body</label>',
                         '<textarea name="body" cols="50" rows="10"></textarea></li>',
-                    '<li class="field"><label></label>',
-                        '<button name="save">Save</button></li>',
+                    '<li class="field controls">',
+                        '<button class="delete">Delete</button>',
+                        '<button class="save">Save</button>',
+                        '<button class="cancel">Cancel</button>',
+                    '</li>',
                 '</ul>',
             '</fieldset></form>',
-        ''].join("\n"),
+        ''].join("\n")
 
     });
 

@@ -3,17 +3,20 @@
     <head>
         <title>DOMjot playground</title>
         <link rel="stylesheet" href="webapp/css/domjot.css" type="text/css" />
-        <script src="webapp/js/require.js" type="text/javascript"></script>
+        <script src="webapp/js/extlib/require.js" type="text/javascript"></script>
         <script type="text/javascript">
             require({
                 baseUrl: 'webapp/js',
-                priority: ['jquery', 'underscore', 'backbone', 'async']
-            }, ['main']);
+                priority: ['extlib/jquery', 'extlib/underscore',
+                           'extlib/backbone', 'extlib/async']
+            }, ['play']);
         </script>
     </head>
     <body>
         <article class="domjot">
-            <h1>DOMjot playground</h1>
+            <header>
+                <h1>DOMjot playground</h1>
+            </header>
 
             <section>
                 <hgroup><h2>Test note #1</h2></hgroup>

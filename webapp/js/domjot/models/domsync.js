@@ -1,19 +1,21 @@
 //
 // ## DOM-backed sync handler for models
 //
-define(["jquery", "domjot/utils", "domjot/views"], function ($, utils, views) {
+define(["extlib/jquery", "domjot/utils", "domjot/views"], 
+        function (i0, utils, views) {
+    var $ = jQuery;
 
     // ### Backbone sync backed by DOM
     var NoteCollectionDOMSync = function (method, model, options) {
         var self = arguments.callee;
         return self.methods[method].call(self.methods, model, options);
-    }
+    };
 
     // ### Backbone sync methods against DOM
     NoteCollectionDOMSync.methods = {
 
         // #### Read notes from DOM
-        read: function (c_or_m, options) {
+        "read": function (c_or_m, options) {
             var self = this,
                 model = (c_or_m.model) ? c_or_m.model : c_or_m,
                 items = $('body > article > section')
@@ -25,7 +27,7 @@ define(["jquery", "domjot/utils", "domjot/views"], function ($, utils, views) {
         },
 
         // #### Create note section in DOM
-        create: function (model, options) {
+        "create": function (model, options) {
             var new_section = $(model.DOM_TMPL).appendTo('body > article');
             model.set({ id: model.uid() });
             utils.updateElementFromModel(new_section, model);
@@ -33,20 +35,20 @@ define(["jquery", "domjot/utils", "domjot/views"], function ($, utils, views) {
         },
 
         // #### Update note section in DOM
-        update: function (model, options) {
+        "update": function (model, options) {
             var section = $("body > article > section[id='"+model.id+"']");
             utils.updateElementFromModel(section, model);
             options.success(model);
         },
 
         // #### Delete note section from DOM
-        delete: function (model, options) {
+        "delete": function (model, options) {
             var section = $("body > article > section[id='"+model.id+"']");
             section.remove();
             options.success(model);
         }
 
-    }
+    };
 
     return {
         NoteCollectionDOMSync: NoteCollectionDOMSync

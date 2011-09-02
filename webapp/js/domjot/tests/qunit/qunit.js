@@ -160,7 +160,7 @@ Test.prototype = {
 				}
 			}
 
-			if (bad == 0) {
+			if (bad === 0) {
 				ol.style.display = "none";
 			}
 

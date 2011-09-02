@@ -25,8 +25,8 @@ define(function () {
                 body: el.find('div.body').html()
             };
             return item;
-        },
+        }
 
     };
 
-})
+});
