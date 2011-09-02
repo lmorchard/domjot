@@ -5,6 +5,14 @@ define(["extlib/jquery", "domjot/utils", "domjot/views"],
         function (i0, utils, views) {
     var $ = jQuery;
 
+    // #### Blank HTML note template
+    var DOM_TMPL = ['',
+        '<section class="note">',
+            '<hgroup><h2></h2></hgroup>',
+            '<div class="body"></div>',
+        '</section>',
+    ''].join("\n");
+
     // ### Backbone sync backed by DOM
     var NoteCollectionDOMSync = function (method, model, options) {
         var self = arguments.callee;
@@ -28,7 +36,7 @@ define(["extlib/jquery", "domjot/utils", "domjot/views"],
 
         // #### Create note section in DOM
         "create": function (model, options) {
-            var new_section = $(model.DOM_TMPL).appendTo('body > article');
+            var new_section = $(DOM_TMPL).appendTo('body > article');
             model.set({ id: model.uid() });
             utils.updateElementFromModel(new_section, model);
             options.success(model);
