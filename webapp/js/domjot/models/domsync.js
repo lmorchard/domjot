@@ -1,17 +1,17 @@
 //
 // ## DOM-backed sync handler for models
 //
-define(["extlib/jquery", "domjot/utils", "domjot/views"], 
-        function (i0, utils, views) {
+define(["extlib/jquery", "domjot/utils", "domjot/views", "domjot/models"], 
+        function (i0, utils, views, models) {
     var $ = jQuery;
 
     // #### Blank HTML note template
-    var DOM_TMPL = ['',
-        '<section class="note">',
+    var DOM_TMPL = [
+        '<section>',
             '<hgroup><h2></h2></hgroup>',
             '<div class="body"></div>',
-        '</section>',
-    ''].join("\n");
+        '</section>'
+    ].join('');
 
     // ### Backbone sync backed by DOM
     var NoteCollectionDOMSync = function (method, model, options) {
@@ -36,16 +36,17 @@ define(["extlib/jquery", "domjot/utils", "domjot/views"],
 
         // #### Create note section in DOM
         "create": function (model, options) {
-            var new_section = $(DOM_TMPL).appendTo('body > article');
-            model.set({ id: model.uid() });
-            utils.updateElementFromModel(new_section, model);
+            var new_section = $(DOM_TMPL)
+                .insertAfter('body > article > header');
+            model.set({ id: utils.noteUID() });
+            utils.updateElementFromModel(new_section, model, true);
             options.success(model);
         },
 
         // #### Update note section in DOM
         "update": function (model, options) {
             var section = $("body > article > section[id='"+model.id+"']");
-            utils.updateElementFromModel(section, model);
+            utils.updateElementFromModel(section, model, true);
             options.success(model);
         },
 
@@ -58,8 +59,38 @@ define(["extlib/jquery", "domjot/utils", "domjot/views"],
 
     };
 
+    // ### Note model
+    var Note = models.BaseNote.extend({
+        sync: NoteCollectionDOMSync
+    });
+
+    // ### Collection of Notes
+    var NoteCollection = models.BaseNoteCollection.extend({
+        sync: NoteCollectionDOMSync,
+        model: Note,
+
+        // #### Produce clean HTML source of the doc from the DOM
+        extractHTMLSource: function () {
+            var cl = $($('html').clone());
+            // Exclude all UI elements
+            cl.find('.ui-only').remove();
+            // Exclude <script> elements in <head> created by RequireJS
+            cl.find('head script[data-requirecontext]').remove();
+            // Exclude any QUnit markup, which appears during testing
+            cl.find('.qunit').remove();
+            return [
+                "<!DOCTYPE html>",
+                "<html>", cl.html(), "</html>"
+            ].join("\n"); 
+        }
+
+    });
+
     return {
-        NoteCollectionDOMSync: NoteCollectionDOMSync
+        NoteCollectionDOMSync: NoteCollectionDOMSync,
+        Note: Note, 
+        NoteCollection: NoteCollection,
+        notes: new NoteCollection()
     };
 
 });

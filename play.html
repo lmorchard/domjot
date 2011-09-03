@@ -2,18 +2,13 @@
 <html>
     <head>
         <title>DOMjot playground</title>
-        <link rel="stylesheet" href="webapp/css/domjot.css" type="text/css" />
+        <link href="webapp/css/domjot.css" rel="stylesheet" type="text/css" />
         <script src="webapp/js/extlib/require.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            require({
-                baseUrl: 'webapp/js',
-                priority: ['extlib/jquery', 'extlib/underscore',
-                           'extlib/backbone', 'extlib/async']
-            }, ['play']);
-        </script>
+        <script src="webapp/js/domjot-editor.js" type="text/javascript"></script>
     </head>
     <body>
         <article class="domjot">
+
             <header>
                 <h1>DOMjot playground</h1>
             </header>

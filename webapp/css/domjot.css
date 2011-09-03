@@ -1,74 +1,115 @@
-header, footer, aside, nav, article {
-    display: block;
+header, footer, aside, menu, article {
+     display: block;
 }
+
 body {
-    color: #333333;
-    font: 14px arial;
-    margin: 0;
+     color: #333333;
+     font: 14px arial;
+     margin: 0pt;
 }
+
 h1, h2, h3, h4, h5 {
-    color: #111111;
+     color: #111111;
 }
+
+menu.controls {
+     margin: 0pt;
+     padding: 0pt;
+}
+
+menu.controls ul {
+     list-style: none outside none;
+     margin: 0pt;
+     padding: 0pt;
+}
+
+menu.controls ul li {
+     display: inline;
+     margin: 0pt;
+     padding: 0pt;
+}
+
 article > header {
-    background: none repeat scroll 0 0 #CCCCCC;
-    padding: 0.125em 1em;
+     background: none repeat scroll 0pt 0pt #CCCCCC;
+     padding: 0.125em 1em;
+     position: relative;
 }
+
+article > header menu.controls {
+     bottom: 1em;
+     position: absolute;
+     right: 1em;
+}
+
 article > section {
-    border: 1px solid #CCCCCC;
-    padding: 0.25em 1em;
-    position: relative;
+     border: 1px solid #CCCCCC;
+     padding: 0.25em 1em;
+     position: relative;
 }
-article > section > nav.controls {
-    position: absolute;
-    right: 1em;
-    top: 1em;
-}
-article > section > nav.controls ul {
-    list-style: none outside none;
-}
-article > section > nav.controls ul li {
-}
-div.note-editor {
-    border: 1px solid #CCCCCC;
-    padding: 0.25em 1em;
-    position: relative;
-}
-div.note-editor form {
-    margin-top: -1em;
-}
-div.note-editor form fieldset {
-    border: 0 none;
-    margin: 1em 0;
-    padding: 0;
-}
-div.note-editor form fieldset ul {
-    list-style: none outside none;
-    margin: 0;
-    padding: 0;
-}
-div.note-editor form fieldset ul li {
-    margin: 0;
-    padding: 0;
-    text-indent: 0;
-}
-div.note-editor form fieldset ul li label {
+
+article > section.editing {
     display: none;
 }
+
+article > section > menu.controls {
+     position: absolute;
+     right: 1em;
+     top: 1em;
+}
+
+article > section > div.body {
+    margin: 1em 0em;
+}
+
+div.note-editor {
+     border: 1px solid #CCCCCC;
+     padding: 0.25em 1em;
+     position: relative;
+}
+
+div.note-editor form {
+     margin-top: -1em;
+}
+
+div.note-editor form fieldset {
+     border: 0pt none;
+     margin: 1em 0pt;
+     padding: 0pt;
+}
+
+div.note-editor form fieldset ul {
+     list-style: none outside none;
+     margin: 0pt;
+     padding: 0pt;
+}
+
+div.note-editor form fieldset ul li {
+     margin: 0pt;
+     padding: 0pt;
+     text-indent: 0pt;
+}
+
+div.note-editor form fieldset ul li label {
+     display: none;
+}
+
 div.note-editor form fieldset ul li input {
-    border: 1px solid #CCCCCC;
-    font: 14px arial;
-    padding: 4px 2px;
-    width: 100%;
+     border: 1px solid #CCCCCC;
+     font: 14px arial;
+     padding: 4px 2px;
+     width: 100%;
 }
+
 div.note-editor form fieldset ul li textarea {
-    border: 1px solid #CCCCCC;
-    font: 14px arial;
-    padding: 4px 2px;
-    width: 100%;
+     border: 1px solid #CCCCCC;
+     font: 14px arial;
+     padding: 4px 2px;
+     width: 100%;
 }
-div.note-editor form fieldset ul li.controls {
-    position: absolute;
-    right: 1em;
-    top: 2em;
+
+div.note-editor .controls {
+     position: absolute;
+     right: 1em;
+     top: 1em;
 }
 

@@ -2,28 +2,22 @@
 // ## domjot models
 //
 define(["extlib/backbone", "extlib/underscore", "extlib/async",
-        "domjot/utils", "domjot/models/domsync"], 
-        function (i1, i2, i3, utils, domsync) {
+        "domjot/utils"], 
+        function (i1, i2, i3, utils) {
 
     // ### Note model
-    var Note = Backbone.Model.extend({
-        sync: domsync.NoteCollectionDOMSync,
-        uid: function () {
-            return _.uniqueId('note-');
-        }
+    var BaseNote = Backbone.Model.extend({
     });
 
     // ### Collection of domjot Notes
-    var NoteCollection = Backbone.Collection.extend({
-        sync: domsync.NoteCollectionDOMSync,
+    var BaseNoteCollection = Backbone.Collection.extend({
         url: "notes",
-        model: Note
+        model: BaseNote
     });
 
     return {
-        Note: Note, 
-        NoteCollection: NoteCollection,
-        notes: new NoteCollection()
+        BaseNote: BaseNote, 
+        BaseNoteCollection: BaseNoteCollection
     };
 
 });

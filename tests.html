@@ -2,9 +2,18 @@
 <html>
     <head>
         <title>DOMjot tests</title>
-        <link rel="stylesheet" type="text/css" media="screen"
-            href="webapp/js/domjot/tests/qunit/qunit.css" />  
-        <link rel="stylesheet" href="webapp/css/domjot.css" type="text/css" />
+        <link href="webapp/css/qunit.css" rel="stylesheet" type="text/css" media="screen" />  
+        <link href="webapp/css/domjot.css" rel="stylesheet" type="text/css" media="screen" />
+        <script src="webapp/js/extlib/qunit.js" type="text/javascript"></script>  
+        <script src="webapp/js/extlib/require.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            QUnit.config.autostart = false;
+            require({
+                baseUrl: 'webapp/js',
+                priority: ['extlib/jquery', 'extlib/underscore', 
+                           'extlib/backbone', 'extlib/async']
+            }, ['domjot/tests']);
+        </script>
     </head>
     <body>
 
@@ -85,19 +94,6 @@
             </section>
 
         </article>
-
-        <script type="text/javascript" 
-            src="webapp/js/domjot/tests/qunit/qunit.js"></script>  
-        <script type="text/javascript"
-            src="webapp/js/extlib/require.js"></script>
-        <script type="text/javascript">
-            QUnit.config.autostart = false;
-            require({
-                baseUrl: 'webapp/js',
-                priority: ['extlib/jquery', 'extlib/underscore', 
-                           'extlib/backbone', 'extlib/async']
-            }, ['domjot/tests/index']);
-        </script>
 
     </body>
 </html>
