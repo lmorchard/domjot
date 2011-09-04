@@ -71,13 +71,28 @@ define(["extlib/jquery", "domjot/utils", "domjot/views", "domjot/models"],
 
         // #### Produce clean HTML source of the doc from the DOM
         extractHTMLSource: function () {
+            
+            // TODO: TiddlyWiki loads up the original page and munges that
+            // source. Might be smarter to do that, since this seems to be
+            // running into a lot of markup injected by addons and framework
+            // code.
+            //
+            // I'm not super happy with the way TiddlyWiki does string munging
+            // instead of DOM wrangling. Then again, there might be a reason
+            // they're doing it that way.
             var cl = $($('html').clone());
+
             // Exclude all UI elements
             cl.find('.ui-only').remove();
             // Exclude <script> elements in <head> created by RequireJS
             cl.find('head script[data-requirecontext]').remove();
             // Exclude any QUnit markup, which appears during testing
             cl.find('.qunit').remove();
+            // HACK: Seems like some Firebug stuff sneaks in there
+            // TODO: Maybe need a whitelist of what makes it in? Maybe grab
+            // just the <article> and rebuild the surrounding HTML?
+            cl.find('style:contains("firebug")').remove();
+            
             return [
                 "<!DOCTYPE html>",
                 "<html>", cl.html(), "</html>"
