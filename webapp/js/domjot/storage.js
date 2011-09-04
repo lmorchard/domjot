@@ -2,26 +2,18 @@
 define(["domjot/utils", "require"],
         function (utils, require) {
 
-    var FileStorage = {
-    };
-    
-    /*
-    function FileAccess () {
+    function Storage () {
         this.initialize.apply(this, arguments);
     }
-
-    _.extend(FileAccess.prototype, Backbone.Event, {
+    _.extend(Storage.prototype, Backbone.Event, {
 
         initialize: function () {
-        },
-
-
+        }
 
     });
-    */
 
     return {
-        FileStorage: FileStorage
+        Storage: Storage
     };
 
 });
