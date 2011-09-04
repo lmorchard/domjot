@@ -14,6 +14,11 @@ define(function () {
             return id;
         },
 
+        // #### Convert a title to an acceptable HTML ID
+        titleToID: function (title) {
+            return (''+title).replace(/^[^a-zA-Z]+/,'').replace(/[^\w]+/gi,'_');
+        },
+
         // #### Common method to update DOM content from model object
         updateElementFromModel: function (el, model, dirty) {
             el.attr('id', model.id)
