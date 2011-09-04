@@ -90,7 +90,9 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
         // #### Save changes to the article.
         saveChanges: function () {
-            console.log(this.notes.extractHTMLSource());
+            var src = this.notes.extractHTMLSource(),
+                path = $.twFile.convertUriToLocalPath(document.location.href);
+            $.twFile.save(path, src);
         }
 
     }, {
