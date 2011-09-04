@@ -91,7 +91,8 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Save changes to the article.
         saveChanges: function () {
             var src = this.notes.extractHTMLSource(),
-                path = $.twFile.convertUriToLocalPath(document.location.href);
+                url = document.location.href,
+                path = $.twFile.convertUriToLocalPath(url);
             $.twFile.save(path, src);
         }
 
