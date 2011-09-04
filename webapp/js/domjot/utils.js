@@ -22,7 +22,7 @@ define(function () {
         // #### Common method to update DOM content from model object
         updateElementFromModel: function (el, model, dirty) {
             el.attr('id', model.id)
-                .find('hgroup > h2').text(model.get('title')).end()
+                .find('hgroup > h2 > a').text(model.get('title')).end()
                 .find('div.body').html(model.get('body')).end();
             if (dirty) {
                 el.attr('data-dirty', 'true');

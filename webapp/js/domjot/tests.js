@@ -60,7 +60,7 @@ function run_tests(domjot_models, domjot_views, appview) {
 
         // The model-assigned IDs might be unpredictable, but they at least
         // have a note- prefix.
-        var ids = $('section[id^="note-"]')
+        var ids = $('section.test-edit')
             .map(function () { return $(this).attr('id'); })
             .get();
 
@@ -169,7 +169,7 @@ function run_tests(domjot_models, domjot_views, appview) {
 
     asyncTest('Save button in editor should commit changes to model', function () {
 
-        var note_id = 'edit-with-ui';
+        var note_id = $('section.test-edit-ui').attr('id');
         var test_data = {
             title: "Title edited in UI",
             body: "<p><em>This body was edited in the UI</em></p>"
@@ -204,7 +204,7 @@ function run_tests(domjot_models, domjot_views, appview) {
 
     asyncTest('Delete button in editor should delete from model', function () {
 
-        var note_id = 'delete-with-ui';
+        var note_id = $('section.test-delete-ui').attr('id');
 
         async.series([
             function (next) {

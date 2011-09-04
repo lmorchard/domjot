@@ -8,7 +8,7 @@ define(["extlib/jquery", "domjot/utils", "domjot/views", "domjot/models"],
     // #### Blank HTML note template
     var DOM_TMPL = [
         '<section>',
-            '<hgroup><h2></h2></hgroup>',
+            '<hgroup><h2><a href=""></a></h2></hgroup>',
             '<div class="body"></div>',
         '</section>'
     ].join('');
