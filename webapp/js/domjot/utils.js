@@ -21,9 +21,15 @@ define(function () {
 
         // #### Common method to update DOM content from model object
         updateElementFromModel: function (el, model, dirty) {
+            var data = model.toJSON(),
+                name = this.titleToID(data.title);
             el.attr('id', model.id)
-                .find('hgroup > h2 > a').text(model.get('title')).end()
-                .find('div.body').html(model.get('body')).end();
+                .find('hgroup > h2 > a')
+                    .text(data.title)
+                    .attr('name', name)
+                    .attr('href', '#'+name)
+                .end()
+                .find('div.body').html(data.body).end();
             if (dirty) {
                 el.attr('data-dirty', 'true');
             }

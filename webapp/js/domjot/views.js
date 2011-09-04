@@ -52,7 +52,9 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Render the app and enable controls.
         render: function () {
             this.$('> section').each(function () { 
-                NoteView.get(this).enableControls(); 
+                NoteView.get(this)
+                    .render()
+                    .enableControls(); 
             });
             this.enableControls();
             return this;
@@ -198,15 +200,15 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         
         // #### Update the editor fields from the related model.
         render: function () {
+            var data = this.model.toJSON();
             $(this.el)
                 .data('view', this)
                 .attr('data-model-id', this.model.id)
                 .html(NoteEditorView.EDITOR_TMPL);
-            
-            this.$('h2').text(this.model.get('title'));
-            this.$('*[name=title]').val(this.model.get('title'))
-                .select().focus();
-            this.$('*[name=body]').val(this.model.get('body'));
+
+            this.$('h2').text(data.title);
+            this.$('*[name=title]').val(data.title).select().focus();
+            this.$('*[name=body]').val(data.body);
 
             //if (typeof(CKEDITOR) != 'undefined') {
             //    CKEDITOR.replace(this.$('*[name=body]')[0]);
