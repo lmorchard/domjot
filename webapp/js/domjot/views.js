@@ -125,7 +125,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Handle a click on an internal link.
         linkClick: function (ev) {
             var href = $(ev.target).attr('href'),
-                name = href.substr(1)
+                name = href.substr(1),
                 section = this.$('section#'+name);
             if (!section.length) {
                 section = this.$('a[name="'+name+'"]').parents('section');
@@ -153,7 +153,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         tagName: 'section', className: 'note',
         events: {
             "click .edit": "revealEditor",
-            "click .hide": "hide",
+            "click .hide": "hide"
         },
 
         // #### Update the DOM for a note
@@ -172,7 +172,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             var section = $(this.el);
             section.fadeIn(NOTE_FADE_TIME, function () { 
                 section.addClass('revealed'); 
-            })
+            });
         },
 
         // #### Hide the note
