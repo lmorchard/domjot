@@ -47,6 +47,14 @@ article > section {
      position: relative;
 }
 
+article > section {
+    display: none;
+}
+
+article > section.revealed {
+    display: block;
+}
+
 article > section.editing {
     display: none;
 }
