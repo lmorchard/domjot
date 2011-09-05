@@ -7,6 +7,14 @@ define(["extlib/backbone", "extlib/underscore", "extlib/async",
 
     // ### Note model
     var BaseNote = Backbone.Model.extend({
+
+        RE_WIKI_LINK: /(^|\s)(([A-Z][a-zA-Z0-9]+[A-Z][a-zA-Z0-9]+)+)($|\s)/g,
+
+        filterBody: function (body) {
+            body = (''+body).replace(this.RE_WIKI_LINK, '$1<a href="#$2">$2</a>$4');
+            return body;
+        }
+
     });
             
     // ### Collection of domjot Notes

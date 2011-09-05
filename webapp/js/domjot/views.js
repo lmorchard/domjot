@@ -218,10 +218,12 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
         // #### Extract data from editor fields.
         serialize: function () {
-            return {
+            data = {
                 title: this.$('*[name=title]').val(),
                 body: this.$('*[name=body]').val()
             };
+            data.body = this.model.filterBody(data.body);
+            return data;
         },
 
         // #### Close the editor, reveal the underlying note view.
