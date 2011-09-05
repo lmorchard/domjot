@@ -263,7 +263,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
                 display_view = this.options.appview.getNoteView(this.model.id);
             editor_el.remove();
             if (display_view) {
-                $(display_view.el).removeClass('editing');
+                $(display_view.el).removeClass('editing').addClass('revealed');
             }
             return false; 
         },
