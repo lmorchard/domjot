@@ -8,7 +8,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
     var $ = jQuery;
 
     var NOTE_KEY = "NoteView";
-
+    var NOTE_FADE_TIME = 250;
 
     // ### Main app view
     var AppView = Backbone.View.extend({
@@ -130,8 +130,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             if (!section.length) {
                 section = this.$('a[name="'+name+'"]').parents('section');
             }
-            // TODO: Animate?
-            section.addClass('revealed');
+            this.getNoteView(section).reveal();
             return true;
         }
 
@@ -154,7 +153,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         tagName: 'section', className: 'note',
         events: {
             "click .edit": "revealEditor",
-            "click .hide": "hideNote",
+            "click .hide": "hide",
         },
 
         // #### Update the DOM for a note
@@ -167,11 +166,21 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         serialize: function () {
             return utils.extractDataFromElement($(this.el), this.model);
         },
+        
+        // #### Reveal the note
+        reveal: function (el) {
+            var section = $(this.el);
+            section.fadeIn(NOTE_FADE_TIME, function () { 
+                section.addClass('revealed'); 
+            })
+        },
 
         // #### Hide the note
-        hideNote: function () {
-            // TODO: Animate?
-            $(this.el).removeClass('revealed');
+        hide: function () {
+            var section = $(this.el);
+            section.fadeOut(NOTE_FADE_TIME, function () {
+                section.removeClass('revealed');
+            });
         },
 
         // #### Create and reveal an editor for this note
