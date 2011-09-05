@@ -13,7 +13,6 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
     // ### Main app view
     var AppView = Backbone.View.extend({
         el: $('body > article'),
-
         tagname: 'article',
 
         events: {
@@ -24,6 +23,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Initialize the app.
         initialize: function (options) {
             var $this = this;
+
             this.options = _.extend({
                 notes: domsync.notes,
                 success: function () {},
@@ -34,7 +34,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
             // Enable controls on new notes added to the collection.
             this.notes.bind("add", function (note, model, options) {
-                NoteView.get(note.id).enableControls();
+                $this.getNoteView(note.id).enableControls();
             });
 
             // Fetch all notes from the document.
@@ -51,8 +51,9 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
         // #### Render the app and enable controls.
         render: function () {
+            var $this = this;
             this.$('> section').each(function () { 
-                NoteView.get(this)
+                $this.getNoteView(this)
                     .render()
                     .enableControls(); 
             });
@@ -69,6 +70,28 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             return false;
         },
 
+        // #### Get a NoteView for an element
+        getNoteView: function (el) {
+            // Convert string to jQuery
+            if (_.isString(el)) { el = $('#'+el); }
+            // Convert element to jQuery
+            else if (_.isElement(el)) { el = $(el); }
+            // Punt if there's no element at all.
+            if (!el.length) { return null; }
+            // Ensure NoteView instance is associated with jquery element data
+            var view = el.data(NOTE_KEY);
+            if (!view) {
+                view = new NoteView({
+                    el: el, 
+                    model: this.notes.get(el.attr('id')), 
+                    collection: this.notes, 
+                    appview: this
+                });
+                el.data(NOTE_KEY, view);
+            }
+            return view;
+        },
+
         // #### Create a new note and reveal its editor.
         newNote: function () {
             var $this = this;
@@ -83,7 +106,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
                     );
                 },
                 function (note, next) {
-                    var note_view = NoteView.get(note.id);
+                    var note_view = $this.getNoteView(note.id);
                     note_view.enableControls();
                     note_view.revealEditor();
                 }
@@ -134,7 +157,8 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         revealEditor: function () {
             var editor = new NoteEditorView({
                 model: this.model, 
-                collection: this.collection
+                collection: this.collection,
+                appview: this.options.appview
             });
             $(this.el).addClass('editing').after(editor.el);
             editor.render().delegateEvents();
@@ -157,28 +181,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             '<menu class="ui-only controls"><ul>',
                 '<li><button class="edit">Edit</button></li>',
             '</ul></menu>'
-        ].join(''),
-
-        // #### Get a view for an element or ID
-        get: function (el) {
-            // Convert string to jQuery
-            if (_.isString(el)) { el = $('#'+el); }
-            // Convert element to jQuery
-            else if (_.isElement(el)) { el = $(el); }
-            // Punt if there's no element at all.
-            if (!el.length) { return null; }
-            // Ensure NoteView instance is associated with jquery element data
-            var view = el.data(NOTE_KEY);
-            if (!view) {
-                var notes = domsync.notes,
-                    note = notes.get(el.attr('id'));
-                view = new NoteView({
-                    el: el, model: note, collection: notes
-                });
-                el.data(NOTE_KEY, view);
-            }
-            return view;
-        }
+        ].join('')
 
     });
 
@@ -210,10 +213,6 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             this.$('*[name=title]').val(data.title).select().focus();
             this.$('*[name=body]').val(data.body);
 
-            //if (typeof(CKEDITOR) != 'undefined') {
-            //    CKEDITOR.replace(this.$('*[name=body]')[0]);
-            //}
-
             return this;
         },
 
@@ -228,7 +227,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Close the editor, reveal the underlying note view.
         close: function () {
             var editor_el = $(this.el),
-                display_view = NoteView.get(this.model.id);
+                display_view = this.options.appview.getNoteView(this.model.id);
             editor_el.remove();
             if (display_view) {
                 $(display_view.el).removeClass('editing');
