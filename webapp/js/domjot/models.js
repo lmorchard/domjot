@@ -8,10 +8,17 @@ define(["extlib/backbone", "extlib/underscore", "extlib/async",
     // ### Note model
     var BaseNote = Backbone.Model.extend({
 
-        RE_WIKI_LINK: /(^|\s)(([A-Z][a-zA-Z0-9]+[A-Z][a-zA-Z0-9]+)+)($|\s)/g,
+        RE_WIKIWORD_LINK: /(^|\s)(([A-Z][a-zA-Z0-9]+[A-Z][a-zA-Z0-9]+)+)($|\s)/g,
+        RE_EXPLICIT_LINK: /\[\[(.*?)\]\]/g,
 
         filterBody: function (body) {
-            body = (''+body).replace(this.RE_WIKI_LINK, '$1<a href="#$2">$2</a>$4');
+            body = ''+body;
+            body = body.replace(this.RE_WIKIWORD_LINK, 
+                '$1<a href="#$2">$2</a>$4');
+            body = body.replace(this.RE_EXPLICIT_LINK, function () {
+                return '<a href="#' + utils.titleToID(arguments[1]) + '">' + 
+                    arguments[1] + '</a>';
+            });
             return body;
         }
 

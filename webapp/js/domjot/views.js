@@ -16,6 +16,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         tagname: 'article',
 
         events: {
+            "click a" : "linkClick",
             "click button.new": "newNote",
             "click button.save": "saveChanges"
         },
@@ -93,7 +94,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         },
 
         // #### Create a new note and reveal its editor.
-        newNote: function () {
+        newNote: function (ev) {
             var $this = this;
             async.waterfall([
                 function (next) {
@@ -114,11 +115,24 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         },
 
         // #### Save changes to the article.
-        saveChanges: function () {
+        saveChanges: function (ev) {
             var src = this.notes.extractHTMLSource(),
                 url = document.location.href,
                 path = $.twFile.convertUriToLocalPath(url);
             $.twFile.save(path, src);
+        },
+
+        // #### Handle a click on an internal link.
+        linkClick: function (ev) {
+            var href = $(ev.target).attr('href'),
+                name = href.substr(1)
+                section = this.$('section#'+name);
+            if (!section.length) {
+                section = this.$('a[name="'+name+'"]').parents('section');
+            }
+            // TODO: Animate?
+            section.addClass('revealed');
+            return true;
         }
 
     }, {
@@ -139,7 +153,8 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
         tagName: 'section', className: 'note',
         events: {
-            "click .edit": "revealEditor"
+            "click .edit": "revealEditor",
+            "click .hide": "hideNote",
         },
 
         // #### Update the DOM for a note
@@ -151,6 +166,12 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Extract note data from the DOM
         serialize: function () {
             return utils.extractDataFromElement($(this.el), this.model);
+        },
+
+        // #### Hide the note
+        hideNote: function () {
+            // TODO: Animate?
+            $(this.el).removeClass('revealed');
         },
 
         // #### Create and reveal an editor for this note
@@ -180,6 +201,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         CONTROLS_TMPL: [
             '<menu class="ui-only controls"><ul>',
                 '<li><button class="edit">Edit</button></li>',
+                '<li><button class="hide">X</button></li>',
             '</ul></menu>'
         ].join('')
 
