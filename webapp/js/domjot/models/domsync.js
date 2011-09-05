@@ -94,9 +94,9 @@ define(["extlib/jquery", "domjot/utils", "domjot/views", "domjot/models"],
             cl.find('style:contains("firebug")').remove();
             
             return [
-                "<!DOCTYPE html>",
-                "<html>", cl.html(), "</html>"
-            ].join("\n"); 
+                "<!DOCTYPE html>\n",
+                "<html>\n", cl.html(), "</html>"
+            ].join(''); 
         }
 
     });

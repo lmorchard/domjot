@@ -20,7 +20,7 @@ define(function () {
         },
 
         // #### Common method to update DOM content from model object
-        updateElementFromModel: function (el, model, dirty) {
+        updateElementFromModel: function (el, model) {
             var data = model.toJSON(),
                 name = this.titleToID(data.title);
             el.attr('id', model.id)
@@ -30,9 +30,6 @@ define(function () {
                     .attr('href', '#'+name)
                 .end()
                 .find('div.body').html(data.body).end();
-            if (dirty) {
-                el.attr('data-dirty', 'true');
-            }
         },
 
         // #### Common method to update plain object from DOM content
