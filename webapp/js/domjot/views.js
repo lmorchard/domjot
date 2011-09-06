@@ -161,6 +161,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         tagName: 'section', className: 'note',
         events: {
             "click .edit": "revealEditor",
+            "click .hideOthers": "hideOthers",
             "click .hide": "hide"
         },
 
@@ -192,7 +193,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         
         // #### Reveal the note
         reveal: function (el) {
-            var section = $(this.el),
+            var section = this.el,
                 $this = this;
             section.fadeIn(NOTE_FADE_TIME, function () { 
                 section.addClass('revealed'); 
@@ -200,11 +201,22 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             });
         },
 
-        // #### Hide the note
+        // #### Hide this note
         hide: function () {
-            var section = $(this.el);
+            var section = this.el;
             section.fadeOut(NOTE_FADE_TIME, function () {
                 section.removeClass('revealed');
+            });
+        },
+
+        // #### Hide all other notes but this one
+        hideOthers: function () {
+            var $this = this,
+                exclude_id = this.el.attr('id');
+            this.options.appview.$('> section').each(function (idx, el) {
+                if (el.id != exclude_id) {
+                    $this.options.appview.getNoteView(el.id).hide();
+                }
             });
         },
 
@@ -235,6 +247,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         CONTROLS_TMPL: [
             '<menu class="ui-only controls"><ul>',
                 '<li><button class="edit">Edit</button></li>',
+                '<li><button class="hideOthers">Hide Others</button></li>',
                 '<li><button class="hide">Hide</button></li>',
             '</ul></menu>'
         ].join('')
