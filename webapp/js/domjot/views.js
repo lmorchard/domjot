@@ -8,7 +8,6 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
     var $ = jQuery;
 
     var NOTE_KEY = "NoteView";
-    var NOTE_FADE_TIME = 250;
 
     // ### Main app view
     var AppView = Backbone.View.extend({
@@ -27,6 +26,9 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
             this.options = _.extend({
                 notes: models.notes,
+                fade_time: 250,
+                confirm_delete: true,
+                animations: true,
                 success: function () {},
                 error: function () {}
             }, options || {});
@@ -194,19 +196,31 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Reveal the note
         reveal: function (el) {
             var section = this.el,
+                appview_options = this.options.appview.options,
                 $this = this;
-            section.fadeIn(NOTE_FADE_TIME, function () { 
+            var final_fn = function () { 
                 section.addClass('revealed'); 
                 $this.highlightMissingLinks();
-            });
+            };
+            if (appview_options.animations) {
+                section.fadeIn(appview_options.fade_time, final_fn);
+            } else {
+                final_fn();
+            }
         },
 
         // #### Hide this note
         hide: function () {
-            var section = this.el;
-            section.fadeOut(NOTE_FADE_TIME, function () {
+            var section = this.el,
+                appview_options = this.options.appview.options;
+            var final_fn = function () {
                 section.removeClass('revealed');
-            });
+            };
+            if (appview_options.animations) {
+                section.fadeOut(appview_options.fade_time, final_fn);
+            } else {
+                final_fn();
+            }
         },
 
         // #### Hide all other notes but this one
@@ -265,10 +279,6 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             "click button.cancel": "close",
             "click button.delete": "del"
         },
-
-        initialize: function () {
-            this.confirm_delete = true;
-        },
         
         // #### Update the editor fields from the related model.
         render: function () {
@@ -281,6 +291,8 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             // Hide the delete button if this is a new note.
             if (this.options.is_new) {
                 this.$('button.delete').hide();
+            } else {
+                $(this.el).attr('data-model-id', data.id);
             }
 
             this.$('h2').text(data.title);
@@ -339,17 +351,15 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
         // #### Delete the underlying note
         del: function () {
-            var that = this;
-            var result = (!this.confirm_delete) ? true :
+            var $this = this,
+                appview_options = this.options.appview.options;
+            var result = (!appview_options.confirm_delete) ? true :
                 window.confirm("Are you sure you want to delete "+
                                "'"+this.model.get('title')+"'?");
             if (result) {
                 this.model.destroy({
-                    success: function (model, resp) {
-                        that.close();
-                    },
-                    error: function (model, resp, options) {
-                    }
+                    success: function (model, resp) { $this.close(); },
+                    error: function (model, resp, options) { }
                 });
             }
             return false; 

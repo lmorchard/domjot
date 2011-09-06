@@ -10,6 +10,8 @@ require(["extlib/jquery", "domjot/models", "domjot/views"],
 
     require.ready(function () {
         window.appview = new domjot_views.AppView({ 
+            confirm_delete: false,
+            animations: false,
             success: function(appview) { 
                 run_tests(domjot_models, domjot_views, appview); 
             }
@@ -21,6 +23,13 @@ function run_tests(domjot_models, domjot_views, appview) {
     QUnit.init();
 
     var notes = appview.notes;
+
+    function findVisibleIDs () {
+        return appview.el
+            .find('section:visible')
+            .map(function (idx, el) { return el.id; })
+            .get();
+    }
 
     // Make lots of noise on all notesection and model events
     notes.bind("all", function (event_name) {
@@ -213,7 +222,6 @@ function run_tests(domjot_models, domjot_views, appview) {
 
                 var editor_el = $('div.note-editor[data-model-id='+note_id+']');
                 var editor_view = editor_el.data('view');
-                editor_view.confirm_delete = false;
 
                 // Click the save button, ensure the editor has gone away.
                 editor_el.find('.controls .delete').click();
@@ -228,6 +236,54 @@ function run_tests(domjot_models, domjot_views, appview) {
                 start();
             }
         ]);
+    });
+
+
+    test('Hide button hides a single note', function () {
+        var visible_ids = findVisibleIDs(),
+            note_id = visible_ids[0],
+            note_view = appview.getNoteView(note_id),
+            note_el = note_view.el;
+        note_el.find('.hide').click();
+        var visible_ids = findVisibleIDs();
+        equal(_.indexOf(visible_ids, note_id), -1);
+    });
+
+
+    test('Hide others button hides all other notes', function () {
+        var note_el = appview.sectionByNameOrID('LinksToHidden'),
+            note_view = appview.getNoteView(note_el);
+        note_el.find('.hideOthers').click();
+        var visible_ids = findVisibleIDs();
+        equal(visible_ids.length, 1);
+        equal(visible_ids[0], note_el.attr('id'));
+    });
+
+
+    test('Links to hidden notes reveal the notes when clicked', function () {
+        var list_note = $('article > section.test-links-to-hidden'),
+            links = list_note.find('.body a'),
+            visible_ids = [],
+            listed_ids = list_note.find('.body a')
+                .map(function (idx, el) {
+                    var name = $(el).attr('href').substr(1);
+                    return appview.sectionByNameOrID(name).attr('id'); 
+                }).get();
+        
+        visible_ids = findVisibleIDs();
+        for (var i=0; i<listed_ids.length; i++) {
+            equal(_.indexOf(visible_ids, listed_ids[i]), -1);
+        }
+
+        links.each(function (idx, el) {
+            var link = $(el);
+            link.click();
+        });
+
+        visible_ids = findVisibleIDs();
+        for (var i=0; i<listed_ids.length; i++) {
+            notEqual(_.indexOf(visible_ids, listed_ids[i]), -1);
+        }
     });
 
 
