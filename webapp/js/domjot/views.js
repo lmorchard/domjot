@@ -185,7 +185,8 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Empty DOM template for note controls
         CONTROLS_TMPL: [
             '<menu class="ui-only controls"><ul>',
-                '<li><input type="checkbox" id="autosave"> <label for="autosave">Auto save&nbsp;</label></li>',
+                '<li><input type="checkbox" id="autosave">',
+                    '<label for="autosave">Auto save&nbsp;</label></li>',
                 '<li><button class="newNote">New note</button></li>',
                 '<li><button class="saveChanges">Save changes</button></li>',
             '</ul></menu>'

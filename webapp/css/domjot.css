@@ -12,6 +12,10 @@ h1, h2, h3, h4, h5 {
      color: #111111;
 }
 
+.hidden {
+    display: none;
+}
+
 menu.controls {
      margin: 0pt;
      padding: 0pt;
@@ -130,4 +134,3 @@ div.note-editor .controls {
      right: 1em;
      top: 1em;
 }
-
