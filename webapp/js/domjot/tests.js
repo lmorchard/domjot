@@ -31,25 +31,6 @@ function run_tests(domjot_models, domjot_views, appview) {
             .get();
     }
 
-    // Make lots of noise on all notesection and model events
-    notes.bind("all", function (event_name) {
-        console.log("COLL ALL", event_name, arguments);
-    });
-    notes.bind("reset", function () {
-        console.log("COLL RESET", arguments);
-        notes.each(function (model, idx) {
-            model.bind("all", function (event_name) {
-                console.log("MODEL ALL", event_name, arguments);
-            });
-        });
-    });
-    notes.bind("add", function (model, notesection, options) {
-        console.log("COLL ADD", arguments);
-        model.bind("all", function (event_name) {
-            console.log("MODEL EVENT", event_name, arguments);
-        });
-    });
-
 
     test('DOM sections should appear as Notes in section', function () {
         equals(notes.length, $('article > section').length,
@@ -211,6 +192,14 @@ function run_tests(domjot_models, domjot_views, appview) {
     });
 
 
+    test('Clicking New Note and then Cancel results in no new model object', function () {
+        var prev_models_count = appview.notes.models.length;
+        appview.$('button.newNote').click();
+        $('div.note-editor .controls .cancel').click();
+        equal(appview.notes.models.length, prev_models_count);
+    });
+
+
     asyncTest('Delete button in editor should delete from model', function () {
 
         var note_id = $('section.test-delete-ui').attr('id');
@@ -245,7 +234,7 @@ function run_tests(domjot_models, domjot_views, appview) {
             note_view = appview.getNoteView(note_id),
             note_el = note_view.el;
         note_el.find('.hide').click();
-        var visible_ids = findVisibleIDs();
+        visible_ids = findVisibleIDs();
         equal(_.indexOf(visible_ids, note_id), -1);
     });
 
@@ -261,29 +250,29 @@ function run_tests(domjot_models, domjot_views, appview) {
 
 
     test('Links to hidden notes reveal the notes when clicked', function () {
-        var list_note = $('article > section.test-links-to-hidden'),
-            links = list_note.find('.body a'),
+        var i,
             visible_ids = [],
-            listed_ids = list_note.find('.body a')
-                .map(function (idx, el) {
+            list_note = $('article > section.test-links-to-hidden'),
+            links = list_note.find('.body a'),
+            listed_ids = links.map(function (idx, el) {
                     var name = $(el).attr('href').substr(1);
                     return appview.sectionByNameOrID(name).attr('id'); 
                 }).get();
         
         visible_ids = findVisibleIDs();
-        for (var i=0; i<listed_ids.length; i++) {
+        for (i=0; i<listed_ids.length; i++) {
             equal(_.indexOf(visible_ids, listed_ids[i]), -1);
         }
 
         links.each(function (idx, el) {
-            var link = $(el);
-            link.click();
+            $(el).click();
         });
 
         visible_ids = findVisibleIDs();
-        for (var i=0; i<listed_ids.length; i++) {
+        for (i=0; i<listed_ids.length; i++) {
             notEqual(_.indexOf(visible_ids, listed_ids[i]), -1);
         }
+
     });
 
 
