@@ -37,7 +37,7 @@ define(["extlib/jquery", "domjot/utils", "domjot/views", "domjot/models"],
         // #### Create note section in DOM
         "create": function (model, options) {
             var new_section = $(DOM_TMPL)
-                .insertAfter('body > article > header');
+                .appendTo('body > article');
             model.set({ id: utils.noteUID() });
             utils.updateElementFromModel(new_section, model, true);
             options.success(model);
