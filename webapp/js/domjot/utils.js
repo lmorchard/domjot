@@ -10,7 +10,7 @@ define(function () {
             var id = '';
             do {
                 id = _.uniqueId('note-');
-            } while ($(id).length > 0);
+            } while ($('#'+id).length > 0);
             return id;
         },
 
