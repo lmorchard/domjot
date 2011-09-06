@@ -73,8 +73,9 @@ article > section > div.body a.missingLink {
     color: #b33;
 }
 
-article > section > div.body a.missingLink:before {
+article > section > div.body a.missingLink:after {
     content: "?";
+    padding-left: 0.25em;
     font-size: 0.7em;
 }
 
