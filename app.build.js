@@ -4,6 +4,6 @@
     dir:     "webapp-build",
     // optimize: "none",
     modules: [
-        { name: "domjot", }
+        { name: "domjot-editor", }
     ]
 })
