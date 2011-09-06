@@ -4,7 +4,7 @@
 define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         "extlib/async", "domjot/utils", "domjot/models/domsync",
         "domjot/storage", "require"], 
-        function (i0, i1, i2, i3, utils, domsync, storage, require) {
+        function (i0, i1, i2, i3, utils, models, storage, require) {
     var $ = jQuery;
 
     var NOTE_KEY = "NoteView";
@@ -16,9 +16,9 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         tagname: 'article',
 
         events: {
-            "click a" : "linkClick",
-            "click button.new": "newNote",
-            "click button.save": "saveChanges"
+            "click a": "linkClick",
+            "click button.newNote": "newNote",
+            "click button.saveChanges": "saveChanges"
         },
 
         // #### Initialize the app.
@@ -26,17 +26,12 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             var $this = this;
 
             this.options = _.extend({
-                notes: domsync.notes,
+                notes: models.notes,
                 success: function () {},
                 error: function () {}
             }, options || {});
 
             this.notes = this.options.notes;
-
-            // Enable controls on new notes added to the collection.
-            this.notes.bind("add", function (note, model, options) {
-                $this.getNoteView(note.id).enableControls();
-            });
 
             // Fetch all notes from the document.
             this.notes.fetch({
@@ -71,8 +66,18 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             return false;
         },
 
+        // #### Get a section by anchor name or by ID
+        sectionByNameOrID: function (name) {
+            var section = this.$('section#'+name);
+            if (!section.length) {
+                section = this.$('a[name="'+name+'"]').parents('section');
+            }
+            return section;
+        },
+
         // #### Get a NoteView for an element
         getNoteView: function (el) {
+            if (!el) { return null; }
             // Convert string to jQuery
             if (_.isString(el)) { el = $('#'+el); }
             // Convert element to jQuery
@@ -94,24 +99,23 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         },
 
         // #### Create a new note and reveal its editor.
-        newNote: function (ev) {
+        newNote: function (ev, title, body) {
             var $this = this;
-            async.waterfall([
-                function (next) {
-                    var note = $this.notes.create(
-                        { title: "New note", body: ""},
-                        { 
-                            success: function (note) { next(null, note); },
-                            error: function (resp) { next(resp); }
-                        }
-                    );
-                },
-                function (note, next) {
-                    var note_view = $this.getNoteView(note.id);
-                    note_view.enableControls();
-                    note_view.revealEditor();
-                }
-            ]);
+            
+            title = title || "New note";
+            body = body || "";
+
+            var new_note = new models.Note(
+                { title: title, body: body }
+            );
+            var editor = new NoteEditorView({
+                model: new_note, 
+                collection: this.notes,
+                appview: this,
+                is_new: true
+            });
+            this.$('> header').after(editor.el);
+            editor.render().delegateEvents();
         },
 
         // #### Save changes to the article.
@@ -124,13 +128,17 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
         // #### Handle a click on an internal link.
         linkClick: function (ev) {
-            var href = $(ev.target).attr('href'),
+            var target = $(ev.target),
+                href = target.attr('href'),
                 name = href.substr(1),
-                section = this.$('section#'+name);
-            if (!section.length) {
-                section = this.$('a[name="'+name+'"]').parents('section');
+                section = this.sectionByNameOrID(name);
+            if (section.length) {
+                // Reveal the section corresponding to the link.
+                this.getNoteView(section).reveal();
+            } else {
+                // Pop open a new note with the given link.
+                return this.newNote(ev, target.text());
             }
-            this.getNoteView(section).reveal();
             return true;
         }
 
@@ -139,8 +147,8 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Empty DOM template for note controls
         CONTROLS_TMPL: [
             '<menu class="ui-only controls"><ul>',
-                '<li><button class="new">New note</button></li>',
-                '<li><button class="save">Save changes</button></li>',
+                '<li><button class="newNote">New note</button></li>',
+                '<li><button class="saveChanges">Save changes</button></li>',
             '</ul></menu>'
         ].join('')
 
@@ -159,6 +167,21 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Update the DOM for a note
         render: function () {
             utils.updateElementFromModel($(this.el), this.model);
+            this.enableControls();
+            this.highlightMissingLinks();
+            return this;
+        },
+
+        // #### Highlight mising internal links.
+        highlightMissingLinks: function () {
+            var $this = this;
+            this.$("a[href^=#]").each(function (idx, el) {
+                var link = $(el),
+                    href = link.attr('href'),
+                    name = href.substr(1),
+                    section = $this.options.appview.sectionByNameOrID(name);
+                link[((section.length) ? 'remove' : 'add') + 'Class']('missingLink');
+            });
             return this;
         },
 
@@ -169,9 +192,11 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         
         // #### Reveal the note
         reveal: function (el) {
-            var section = $(this.el);
+            var section = $(this.el),
+                $this = this;
             section.fadeIn(NOTE_FADE_TIME, function () { 
                 section.addClass('revealed'); 
+                $this.highlightMissingLinks();
             });
         },
 
@@ -210,7 +235,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         CONTROLS_TMPL: [
             '<menu class="ui-only controls"><ul>',
                 '<li><button class="edit">Edit</button></li>',
-                '<li><button class="hide">X</button></li>',
+                '<li><button class="hide">Hide</button></li>',
             '</ul></menu>'
         ].join('')
 
@@ -235,10 +260,15 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Update the editor fields from the related model.
         render: function () {
             var data = this.model.toJSON();
+            
             $(this.el)
                 .data('view', this)
-                .attr('data-model-id', this.model.id)
                 .html(NoteEditorView.EDITOR_TMPL);
+
+            // Hide the delete button if this is a new note.
+            if (this.options.is_new) {
+                this.$('button.delete').hide();
+            }
 
             this.$('h2').text(data.title);
             this.$('*[name=title]').val(data.title).select().focus();
@@ -259,26 +289,38 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
         // #### Close the editor, reveal the underlying note view.
         close: function () {
-            var editor_el = $(this.el),
-                display_view = this.options.appview.getNoteView(this.model.id);
+            var editor_el = $(this.el);
             editor_el.remove();
-            if (display_view) {
-                $(display_view.el).removeClass('editing').addClass('revealed');
+            if (!this.options.is_new) {
+                var display_view = this.options.appview.getNoteView(this.model.id);
+                if (display_view) {
+                    $(display_view.el).removeClass('editing');
+                    display_view.render().reveal();
+                }
             }
             return false; 
         },
 
         // #### Commit the state of the editor to the related model.
         commit: function () {
-            var that = this,
+            var $this = this,
                 data = this.serialize();
-            this.model.save(data, {
-                success: function (model, resp) {
-                    that.close();
-                },
-                error: function (model, resp, options) {
-                }
-            });
+
+            if (!this.options.is_new) {
+                this.model.save(data, {
+                    success: function (model, resp) { $this.close(); },
+                    error: function (model, resp, options) { }
+                });
+            } else {
+                this.collection.create(data, {
+                    success: function (model, resp) { 
+                        $this.options.is_new = false;
+                        $this.model = model;
+                        $this.close(); 
+                    },
+                    error: function (model, resp, options) { }
+                });
+            }
             return false;
         },
 

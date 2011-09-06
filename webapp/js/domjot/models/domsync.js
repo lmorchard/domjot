@@ -61,7 +61,15 @@ define(["extlib/jquery", "domjot/utils", "domjot/views", "domjot/models"],
 
     // ### Note model
     var Note = models.BaseNote.extend({
-        sync: NoteCollectionDOMSync
+        sync: NoteCollectionDOMSync,
+
+        save: function (attrs, options) {
+            models.BaseNote.prototype.save.call(this, attrs, options);
+            if (this.isNew()) {
+                this.attributes.id = utils.noteUID();
+            }
+        }
+
     });
 
     // ### Collection of Notes

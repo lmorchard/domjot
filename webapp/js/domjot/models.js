@@ -8,7 +8,7 @@ define(["extlib/backbone", "extlib/underscore", "extlib/async",
     // ### Note model
     var BaseNote = Backbone.Model.extend({
 
-        RE_WIKIWORD_LINK: /(^|\b)(([A-Z][a-zA-Z0-9]+[A-Z][a-zA-Z0-9]+)+)($|\b)/g,
+        RE_WIKIWORD_LINK: /(^|\s)(([A-Z][a-zA-Z0-9]+[A-Z][a-zA-Z0-9]+)+)(\s|$)/g,
         RE_EXPLICIT_LINK: /\[\[(.*?)\]\]/g,
 
         filterBody: function (body) {

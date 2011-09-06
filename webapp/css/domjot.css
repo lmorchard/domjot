@@ -69,6 +69,15 @@ article > section > div.body {
     margin: 1em 0em;
 }
 
+article > section > div.body a.missingLink {
+    color: #b33;
+}
+
+article > section > div.body a.missingLink:before {
+    content: "?";
+    font-size: 0.7em;
+}
+
 div.note-editor {
      border: 1px solid #CCCCCC;
      padding: 0.25em 1em;
