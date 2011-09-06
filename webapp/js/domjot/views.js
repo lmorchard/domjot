@@ -16,6 +16,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
         events: {
             "click a": "linkClick",
+            "click input#autosave": "toggleAutosave",
             "click button.newNote": "newNote",
             "click button.saveChanges": "saveChanges"
         },
@@ -27,6 +28,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             this.options = _.extend({
                 notes: models.notes,
                 fade_time: 250,
+                save_delay: 500,
                 confirm_delete: true,
                 animations: true,
                 success: function () {},
@@ -45,6 +47,16 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
                     $this.options.error($this, err);
                 }
             });
+
+            // Schedule autosave on significant model events
+            var save_triggers = ['add', 'change', 'destroy', 'remove'];
+            this.notes.bind('all', function (ev_name) {
+                if ($this.options.autosave && 
+                        save_triggers.indexOf(ev_name) != -1) {
+                    $this.scheduleSave();
+                }
+            });
+
         },
 
         // #### Render the app and enable controls.
@@ -120,6 +132,18 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             editor.render().delegateEvents();
         },
 
+        // #### Schedule a delayed save
+        // Repeated calls while a timer is in progress will be ignored.
+        scheduleSave: function () {
+            var self = arguments.callee,
+                $this = this;
+            if (self.timer) { return; }
+            self.timer = setTimeout(function () {
+                self.timer = null;
+                $this.saveChanges();
+            }, this.options.save_delay);
+        },
+
         // #### Save changes to the article.
         saveChanges: function (ev) {
             var src = this.notes.extractHTMLSource(),
@@ -147,6 +171,13 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             }
 
             return true;
+        },
+
+        // #### Toggle whether to autosave on each model change.
+        toggleAutosave: function (ev) {
+            var target = $(ev.target),
+                autosave = target.is(':checked');
+            this.options.autosave = autosave;
         }
 
     }, {
@@ -154,6 +185,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Empty DOM template for note controls
         CONTROLS_TMPL: [
             '<menu class="ui-only controls"><ul>',
+                '<li><input type="checkbox" id="autosave"> <label for="autosave">Auto save&nbsp;</label></li>',
                 '<li><button class="newNote">New note</button></li>',
                 '<li><button class="saveChanges">Save changes</button></li>',
             '</ul></menu>'
@@ -205,7 +237,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
                 appview_options = this.options.appview.options,
                 $this = this;
             var final_fn = function () { 
-                section.addClass('revealed'); 
+                section.addClass('revealed').removeAttr('style'); 
                 $this.highlightMissingLinks();
             };
             if (appview_options.animations) {
@@ -220,7 +252,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             var section = this.el,
                 appview_options = this.options.appview.options;
             var final_fn = function () {
-                section.removeClass('revealed');
+                section.removeClass('revealed').removeAttr('style');
             };
             if (appview_options.animations) {
                 section.fadeOut(appview_options.fade_time, final_fn);
@@ -338,11 +370,14 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
                 data = this.serialize();
 
             if (!this.options.is_new) {
+                
                 this.model.save(data, {
                     success: function (model, resp) { $this.close(); },
                     error: function (model, resp, options) { }
                 });
+
             } else {
+                
                 this.collection.create(data, {
                     success: function (model, resp) { 
                         $this.options.is_new = false;
@@ -351,6 +386,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
                     },
                     error: function (model, resp, options) { }
                 });
+
             }
             return false;
         },
