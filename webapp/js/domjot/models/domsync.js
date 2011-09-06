@@ -92,6 +92,8 @@ define(["extlib/jquery", "domjot/utils", "domjot/views", "domjot/models"],
 
             // Exclude all UI elements
             cl.find('.ui-only').remove();
+            // Remove all inline styling on sections (eg. display: block)
+            cl.find('article > section').removeAttr('style');
             // Exclude <script> elements in <head> created by RequireJS
             cl.find('head script[data-requirecontext]').remove();
             // Exclude any QUnit markup, which appears during testing
@@ -101,10 +103,12 @@ define(["extlib/jquery", "domjot/utils", "domjot/views", "domjot/models"],
             // just the <article> and rebuild the surrounding HTML?
             cl.find('style:contains("firebug")').remove();
             
-            return [
+            var src = [
                 "<!DOCTYPE html>\n",
                 "<html>\n", cl.html(), "</html>"
-            ].join(''); 
+            ].join('');
+
+            return src;
         }
 
     });
