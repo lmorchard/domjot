@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <title>DOMjot notes</title>
+        <link href="webapp/css/domjot.css" rel="stylesheet" type="text/css">
+        <script src="webapp/js/extlib/require.js" type="text/javascript"></script>
+        <script src="webapp/js/domjot-editor.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <article class="domjot">
+            <header>
+                <h1>DOMjot notes</h1>
+            </header>
+            <section class="revealed" id="note-1">
+                <hgroup>
+                    <h2><a name="Index" href="#Index">Index</a></h2>
+                </hgroup>
+                <div class="body"><p>These are some notes I'm starting to keep on DOMjot, by dogfooding it.</p>
+<ul>
+<li><a class="" href="#General_Notions">General Notions</a></li>
+<li><a href="#TODO">TODO</a></li>
+</ul></div>
+            </section>
+<section class="revealed" id="note-11"><hgroup><h2><a name="General_Notions" href="#General_Notions">General Notions</a></h2></hgroup><div class="body"><p>I've got some general thoughts on how this thing should be built:</p>
+
+<ul>
+<li>Documents are a microformat pattern of <a class="missingLink" href="#HTML5">HTML5</a> - eg. article containing note sections</li>
+<li>Authoring UI should be considered scaffolding atop documents, easily removable and not necessary for viewing</li>
+<li>Navigation augmentations (eg. search, hide/show links, sidebar listing pages) should also be optional scaffolding</li>
+<li>Play with media queries and making this thing work great on my Android phone</li>
+<li>Plugins driven by Backbone events</li>
+</ul></div></section>
+        <section class="" id="note-7"><hgroup><h2><a name="TODO" href="#TODO">TODO</a></h2></hgroup><div class="body"><ul>
+<li><a class="missingLink" href="#Markdown_editor">Markdown editor</a></li>
+<li>Bookmarklet to overlay authoring scaffolding on page</li>
+<li>S3 storage with credentials in localStorage</li>
+<li>Note reordering</li>
+<li>Improve <a class="missingLink" href="#HTML">HTML</a> source extraction; prettier printing, cleaner crap filtering</li>
+</ul></div></section>
+<section class="" id="note-10"><hgroup><h2><a name="Markdown_editor" href="#Markdown_editor">Markdown editor</a></h2></hgroup><div class="body"><p>I want to build a plugin that lets me write notes with Markdown</p>
+
+<p>However, I can't find an easy way to do round-trip edits between <a class="missingLink" href="#HTML">HTML</a> and Markdown with JS. So, I might just stash Markdown source in a hidden PRE element and render to <a class="missingLink" href="#HTML">HTML</a> on save. Then, I'll load the editor from the PRE on the next edit. The main downside will be that any edits directly done to the <a class="missingLink" href="#HTML">HTML</a> will be clobbered. Probably covered by a caveat warning.</p>
+
+<p>Might be a good idea to advise plugins to store extended content outside the body content div, so that editors like this don't clobber their content.</p></div></section></article>
+    
+
+
+
+</body></html>
