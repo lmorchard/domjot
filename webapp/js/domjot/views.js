@@ -131,9 +131,13 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
         // #### Handle a click on an internal link.
         linkClick: function (ev) {
             var target = $(ev.target),
-                href = target.attr('href'),
-                name = href.substr(1),
+                href = target.attr('href');
+
+            if (!href) { return true; }
+            
+            var name = href.substr(1);
                 section = this.sectionByNameOrID(name);
+                
             if (section.length) {
                 // Reveal the section corresponding to the link.
                 this.getNoteView(section).reveal();
@@ -141,6 +145,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
                 // Pop open a new note with the given link.
                 return this.newNote(ev, target.text());
             }
+
             return true;
         }
 
@@ -162,6 +167,7 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
 
         tagName: 'section', className: 'note',
         events: {
+            "dblclick": "revealEditor",
             "click .edit": "revealEditor",
             "click .hideOthers": "hideOthers",
             "click .hide": "hide"
