@@ -1,7 +1,7 @@
 //
 // ## DOM-backed sync handler for models
 //
-define(["extlib/jquery", "domjot/utils", "domjot/views", "domjot/models"], 
+define(["jquery", "domjot/utils", "domjot/views", "domjot/models"], 
         function ($, utils, views, models) {
 
     // #### Blank HTML note template

@@ -1,8 +1,8 @@
 //
 // ## domjot tests
 //
-define(["extlib/qunit", "extlib/jquery", "extlib/jQuery.twFile",
-         "extlib/underscore", "extlib/async", "domjot/models", "domjot/views"], 
+define(["qunit", "jquery", "jQuery.twFile",
+         "underscore", "async", "domjot/models", "domjot/views"], 
         function (QUnit, $, twFile, _, async, domjot_models, domjot_views) {
 
 return function (appview) {

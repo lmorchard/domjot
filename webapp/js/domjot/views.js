@@ -1,9 +1,8 @@
 //
 // ## domjot views
 //
-define(["extlib/jquery", "extlib/jQuery.twFile", "extlib/backbone", "extlib/underscore",
-        "extlib/async", "domjot/utils", "domjot/models/domsync",
-        "domjot/storage", "require"], 
+define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
+        "domjot/utils", "domjot/models/domsync", "domjot/storage", "require"], 
         function ($, twFile, Backbone, _, async, utils, models, storage, require) {
 
     var NOTE_KEY = "NoteView";

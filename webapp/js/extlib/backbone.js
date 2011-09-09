@@ -4,7 +4,7 @@
 //     For all details and documentation:
 //     http://documentcloud.github.com/backbone
 
-define(['extlib/jquery', 'extlib/underscore'], function(jQuery, _) { 
+define(['jquery', 'underscore'], function(jQuery, _) { 
     var root = { jQuery:jQuery, _:_ };
 (function(){
 

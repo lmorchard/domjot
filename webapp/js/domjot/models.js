@@ -1,7 +1,7 @@
 //
 // ## domjot models
 //
-define(["extlib/backbone", "extlib/underscore", "extlib/async",
+define(["backbone", "underscore", "async",
         "domjot/utils"], 
         function (Backbone, _, async, utils) {
 

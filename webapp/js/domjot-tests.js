@@ -4,10 +4,18 @@
 require(
 
     { 
-        catchError: { define: true }
+        catchError: { define: true },
+        paths: {
+            'async': 'extlib/async',
+            'backbone': 'extlib/backbone',
+            'jquery': 'extlib/jquery',
+            'jQuery.twFile': 'extlib/jQuery.twFile',
+            'qunit': 'extlib/qunit',
+            'underscore': 'extlib/underscore'
+        }
     },
 
-    ["extlib/qunit", "domjot/views", "domjot/tests", "require"], 
+    ["qunit", "domjot/views", "domjot/tests", "require"], 
     
     function (QUnit, domjot_views, tests, require) {
         QUnit.config.autostart = false;

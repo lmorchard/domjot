@@ -1,7 +1,7 @@
 //
 // ## domjot utils
 //
-define(["extlib/underscore"], function (_) {
+define(["underscore"], function (_) {
 
     return {
 
