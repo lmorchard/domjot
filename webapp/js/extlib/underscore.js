@@ -6,6 +6,8 @@
 //     For all details and documentation:
 //     http://documentcloud.github.com/underscore
 
+define([], function() { 
+    var root = {};
 (function() {
 
   // Baseline setup
@@ -836,4 +838,6 @@
     return this._wrapped;
   };
 
-})();
+}).call(root);
+    return root._;
+});

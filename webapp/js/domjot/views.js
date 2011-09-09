@@ -1,11 +1,10 @@
 //
 // ## domjot views
 //
-define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
+define(["extlib/jquery", "extlib/jQuery.twFile", "extlib/backbone", "extlib/underscore",
         "extlib/async", "domjot/utils", "domjot/models/domsync",
         "domjot/storage", "require"], 
-        function (i0, i1, i2, i3, utils, models, storage, require) {
-    var $ = jQuery;
+        function ($, twFile, Backbone, _, async, utils, models, storage, require) {
 
     var NOTE_KEY = "NoteView";
 
@@ -356,7 +355,8 @@ define(["extlib/jquery", "extlib/backbone", "extlib/underscore",
             var editor_el = $(this.el);
             editor_el.remove();
             if (!this.options.is_new) {
-                var display_view = this.options.appview.getNoteView(this.model.id);
+                var display_view = this.options.appview
+                    .getNoteView(this.model.id);
                 if (display_view) {
                     $(display_view.el).removeClass('editing');
                     display_view.render().reveal();

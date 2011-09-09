@@ -3,7 +3,7 @@
 //
 define(["extlib/backbone", "extlib/underscore", "extlib/async",
         "domjot/utils"], 
-        function (i1, i2, i3, utils) {
+        function (Backbone, _, async, utils) {
 
     // ### Note model
     var BaseNote = Backbone.Model.extend({

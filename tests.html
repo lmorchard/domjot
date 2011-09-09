@@ -4,16 +4,8 @@
         <title>DOMjot tests</title>
         <link href="webapp/css/qunit.css" rel="stylesheet" type="text/css" media="screen" />  
         <link href="webapp/css/domjot.css" rel="stylesheet" type="text/css" media="screen" />
-        <script src="webapp/js/extlib/qunit.js" type="text/javascript"></script>  
-        <script src="webapp/js/extlib/require.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            QUnit.config.autostart = false;
-            require({
-                baseUrl: 'webapp/js',
-                priority: ['extlib/jquery', 'extlib/underscore', 
-                           'extlib/backbone', 'extlib/async']
-            }, ['domjot/tests']);
-        </script>
+        <script src="webapp/js/extlib/require.js" type="text/javascript"
+            data-main="webapp/js/domjot-tests.js"></script>
     </head>
     <body>
 

@@ -7,7 +7,7 @@
  * Dual licensed under the MIT (MIT-LICENSE.txt)
  * or GPL (GPL-LICENSE.txt) licenses.
  */
-
+define([], function () {
 (function(window) {
 
 var defined = {
@@ -1508,3 +1508,5 @@ QUnit.diff = (function() {
 })();
 
 })(this);
+    return this.QUnit;
+});

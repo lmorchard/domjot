@@ -1,17 +1,18 @@
 //
-// ## domjot editor bootstrap loader
+// ## domjot editor bootstrap
 //
-require({
-    catchError: { 
-        define: true 
-    },
-    baseUrl: 'webapp/js',
-    priority: ['extlib/jquery', 'extlib/jQuery.twFile', 'extlib/underscore',
-               'extlib/backbone', 'extlib/async']
-}, function () {
-    require(["domjot/views"], function (domjot_views) {
+require(
+    
+    { 
+        catchError: { define: true }
+    }, 
+    
+    ["domjot/views", "require"], 
+    
+    function (domjot_views, require) {
         require.ready(function () {
             window.appview = new domjot_views.AppView();
         });
-    });
-});
+    }
+
+);

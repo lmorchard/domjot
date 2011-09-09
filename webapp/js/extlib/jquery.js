@@ -13,6 +13,7 @@
  *
  * Date: Thu Jun 30 14:16:56 2011 -0400
  */
+define([], function() { 
 (function( window, undefined ) {
 
 // Use the correct document accordingly with window argument (sandbox)
@@ -8979,3 +8980,5 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 // Expose jQuery to the global object
 window.jQuery = window.$ = jQuery;
 })(window);
+return window.jQuery;
+});

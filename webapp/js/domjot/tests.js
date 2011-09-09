@@ -1,25 +1,12 @@
 //
 // ## domjot tests
 //
-require(["extlib/jquery", "domjot/models", "domjot/views"], 
-        function (i0, domjot_models, domjot_views) {
-    var $ = jQuery;
+define(["extlib/qunit", "extlib/jquery", "extlib/jQuery.twFile",
+         "extlib/underscore", "extlib/async", "domjot/models", "domjot/views"], 
+        function (QUnit, $, twFile, _, async, domjot_models, domjot_views) {
 
-    window.domjot_models = domjot_models;
-    window.domjot_views = domjot_views;
+return function (appview) {
 
-    require.ready(function () {
-        window.appview = new domjot_views.AppView({ 
-            confirm_delete: false,
-            animations: false,
-            success: function(appview) { 
-                run_tests(domjot_models, domjot_views, appview); 
-            }
-        });
-    });
-});
-
-function run_tests(domjot_models, domjot_views, appview) {
     QUnit.init();
 
     var notes = appview.notes;
@@ -277,4 +264,6 @@ function run_tests(domjot_models, domjot_views, appview) {
 
 
     QUnit.start();
-}
+};
+
+});

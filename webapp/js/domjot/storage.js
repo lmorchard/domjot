@@ -1,6 +1,6 @@
 // ## domjot input/output utils
-define(["domjot/utils", "require"],
-        function (utils, require) {
+define(["extlib/underscore", "extlib/backbone", "domjot/utils", "require"],
+        function (_, Backbone, utils, require) {
 
     function Storage () {
         this.initialize.apply(this, arguments);

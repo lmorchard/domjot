@@ -10,7 +10,7 @@ Triple licensed under the BSD, MIT and GPL licenses:
   http://www.opensource.org/licenses/mit-license.php
   http://www.gnu.org/licenses/gpl.html
 */
-
+define(['extlib/jquery'], function(jQuery) { 
 
 (function($) {
 	if(!$.twFile) {
@@ -311,3 +311,4 @@ Triple licensed under the BSD, MIT and GPL licenses:
 	}
 
 })(jQuery);
+});

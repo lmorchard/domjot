@@ -1,4 +1,6 @@
 /*global setTimeout: false, console: false */
+define([], function() { 
+    var root = {};
 (function () {
 
     var async = {};
@@ -630,4 +632,6 @@
         };
     };
 
-}());
+}).call(root);
+    return root.async;
+});

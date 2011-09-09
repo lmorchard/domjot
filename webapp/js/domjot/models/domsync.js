@@ -2,8 +2,7 @@
 // ## DOM-backed sync handler for models
 //
 define(["extlib/jquery", "domjot/utils", "domjot/views", "domjot/models"], 
-        function (i0, utils, views, models) {
-    var $ = jQuery;
+        function ($, utils, views, models) {
 
     // #### Blank HTML note template
     var DOM_TMPL = [
