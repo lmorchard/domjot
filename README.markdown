@@ -16,7 +16,8 @@ Load `tests.html` in a browser.
 
 Need to elaborate on this process, but for now:
 
-    node r.js -o app.build.js 
+    npm install requirejs
+    ./node_modules/requirejs/bin/r.js -o app.build.js
 
 ## Contributors
 

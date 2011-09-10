@@ -1,2 +1,3 @@
 webapp-build/
+node_modules/
 *.sw?
