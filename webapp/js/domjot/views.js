@@ -1,9 +1,10 @@
 //
 // ## domjot views
 //
-define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
-        "domjot/utils", "domjot/models/domsync", "domjot/storage", "require"], 
-        function ($, twFile, Backbone, _, async, utils, models, storage, require) {
+define(["require", "jquery", "underscore", "backbone", "async", "jQuery.twFile",
+        "domjot/utils", "domjot/plugins", "domjot/models/domsync" ], 
+function (require, $, _, Backbone, async, twFile,
+            Utils, Plugins, Models) {
 
     var NOTE_KEY = "NoteView";
 
@@ -24,7 +25,7 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
             var $this = this;
 
             this.options = _.extend({
-                notes: models.notes,
+                notes: Models.notes,
                 fade_time: 250,
                 save_delay: 500,
                 confirm_delete: true,
@@ -33,6 +34,7 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
                 error: function () {}
             }, options || {});
 
+            // Keep a handle on a collection of notes
             this.notes = this.options.notes;
 
             // Fetch all notes from the document.
@@ -55,17 +57,23 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
                 }
             });
 
+            // Get a collection of plugins from options, or have the registry
+            // create a new one.
+            this.plugins = this.options.plugins || 
+                Plugins.registry.createCollection({
+                    plugin_options: { appview: this }
+                });
+
         },
 
         // #### Render the app and enable controls.
         render: function () {
             var $this = this;
             this.$('> section').each(function () { 
-                $this.getNoteView(this)
-                    .render()
-                    .enableControls(); 
+                $this.getNoteView(this).render();
             });
             this.enableControls();
+            this.trigger('render', this);
             return this;
         },
 
@@ -75,6 +83,7 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
                 this.$('> header').prepend(AppView.CONTROLS_TMPL);
                 this.delegateEvents();
             }
+            this.trigger('enablecontrols', this);
             return false;
         },
 
@@ -117,17 +126,25 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
             title = title || "New note";
             body = body || "";
 
-            var new_note = new models.Note(
-                { title: title, body: body }
-            );
+            var new_note_data = { 
+                title: title, 
+                body: body 
+            };
+
+            var new_note = new Models.Note(new_note_data);
+            this.trigger("newnote:model", this, new_note);
+
             var editor = new NoteEditorView({
                 model: new_note, 
                 collection: this.notes,
                 appview: this,
                 is_new: true
             });
+
             this.$('> header').after(editor.el);
             editor.render().delegateEvents();
+
+            this.trigger('newnote', this, editor);
         },
 
         // #### Schedule a delayed save
@@ -156,10 +173,14 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
                 href = target.attr('href');
 
             if (!href) { return true; }
+
+            if (href.charAt(0) != '#') { return true; }
             
             var name = href.substr(1);
                 section = this.sectionByNameOrID(name);
                 
+            this.trigger('linkclick', this, target, href, section);
+
             if (section.length) {
                 // Reveal the section corresponding to the link.
                 this.getNoteView(section).reveal();
@@ -206,9 +227,11 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
 
         // #### Update the DOM for a note
         render: function () {
-            utils.updateElementFromModel($(this.el), this.model);
+            Utils.updateElementFromModel($(this.el), this.model);
             this.enableControls();
             this.highlightMissingLinks();
+            this.options.appview.trigger('note:render', 
+                this.options.appview, this);
             return this;
         },
 
@@ -227,18 +250,25 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
 
         // #### Extract note data from the DOM
         serialize: function () {
-            return utils.extractDataFromElement($(this.el), this.model);
+            var data = Utils.extractDataFromElement($(this.el), this.model);
+            this.options.appview.trigger('note:serialize',
+                this.options.appview, this, data);
+            return data;
         },
         
         // #### Reveal the note
         reveal: function (el) {
-            var section = this.el,
-                appview_options = this.options.appview.options,
-                $this = this;
+            var $this = this,
+                section = this.el,
+                appview = this.options.appview,
+                appview_options = appview.options;
+
             var final_fn = function () { 
                 section.addClass('revealed').removeAttr('style'); 
                 $this.highlightMissingLinks();
+                appview.trigger('note:reveal', appview, $this);
             };
+
             if (appview_options.animations) {
                 section.fadeIn(appview_options.fade_time, final_fn);
             } else {
@@ -248,11 +278,16 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
 
         // #### Hide this note
         hide: function () {
-            var section = this.el,
-                appview_options = this.options.appview.options;
+            var $this = this,
+                section = this.el,
+                appview = this.options.appview,
+                appview_options = appview.options;
+
             var final_fn = function () {
                 section.removeClass('revealed').removeAttr('style');
+                appview.trigger('note:hide', appview, $this);
             };
+
             if (appview_options.animations) {
                 section.fadeOut(appview_options.fade_time, final_fn);
             } else {
@@ -263,12 +298,15 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
         // #### Hide all other notes but this one
         hideOthers: function () {
             var $this = this,
-                exclude_id = this.el.attr('id');
+                exclude_id = this.el.attr('id'),
+                appview = this.options.appview,
+                appview_options = appview.options;
             this.options.appview.$('> section').each(function (idx, el) {
                 if (el.id != exclude_id) {
                     $this.options.appview.getNoteView(el.id).hide();
                 }
             });
+            appview.trigger('note:hideothers', appview, $this);
         },
 
         // #### Create and reveal an editor for this note
@@ -280,6 +318,8 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
             });
             $(this.el).addClass('editing').after(editor.el);
             editor.render().delegateEvents();
+            this.options.appview.trigger('note:revealeditor', 
+                this.options.appview, this, editor);
             return false;
         },
 
@@ -289,6 +329,8 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
                 this.$('hgroup').before(NoteView.CONTROLS_TMPL);
                 this.delegateEvents();
             }
+            this.options.appview.trigger('note:enablecontrols', 
+                this.options.appview, this);
             return false;
         }
 
@@ -336,6 +378,9 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
             this.$('*[name=title]').val(data.title).select().focus();
             this.$('*[name=body]').val(data.body);
 
+            this.options.appview.trigger('editor:render', 
+                this.options.appview, this);
+
             return this;
         },
 
@@ -346,6 +391,8 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
                 body: this.$('*[name=body]').val()
             };
             data.body = this.model.filterBody(data.body);
+            this.options.appview.trigger('editor:serialize', 
+                this.options.appview, this, data);
             return data;
         },
 
@@ -361,6 +408,8 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
                     display_view.render().reveal();
                 }
             }
+            this.options.appview.trigger('editor:close', 
+                this.options.appview, this);
             return false; 
         },
 
@@ -369,10 +418,17 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
             var $this = this,
                 data = this.serialize();
 
+            this.options.appview.trigger('editor:precommit', 
+                this.options.appview, this, data);
+
             if (!this.options.is_new) {
                 
                 this.model.save(data, {
-                    success: function (model, resp) { $this.close(); },
+                    success: function (model, resp) { 
+                        $this.close(); 
+                        $this.options.appview.trigger('editor:save', 
+                            $this.options.appview, $this, model);
+                    },
                     error: function (model, resp, options) { }
                 });
 
@@ -383,6 +439,8 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
                         $this.options.is_new = false;
                         $this.model = model;
                         $this.close(); 
+                        $this.options.appview.trigger('editor:create',
+                            $this.options.appview, $this, model);
                     },
                     error: function (model, resp, options) { }
                 });
@@ -399,8 +457,14 @@ define(["jquery", "jQuery.twFile", "backbone", "underscore", "async",
                 window.confirm("Are you sure you want to delete "+
                                "'"+this.model.get('title')+"'?");
             if (result) {
+                this.options.appview.trigger('editor:predelete', 
+                    this.options.appview, this, data);
                 this.model.destroy({
-                    success: function (model, resp) { $this.close(); },
+                    success: function (model, resp) { 
+                        $this.options.appview.trigger('editor:delete', 
+                            $this.options.appview, $this, model);
+                        $this.close(); 
+                    },
                     error: function (model, resp, options) { }
                 });
             }
