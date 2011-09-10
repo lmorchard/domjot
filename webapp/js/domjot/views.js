@@ -40,6 +40,13 @@ function (require, $, _, Backbone, async, twFile,
             // Fetch all notes from the document.
             this.notes.fetch({
                 success: function () {
+                    // Get a collection of plugins from options, or have the registry
+                    // create a new one.
+                    $this.plugins = $this.options.plugins || 
+                        Plugins.registry.createCollection({
+                            appview: $this,
+                            notes: $this.notes
+                        });
                     $this.render();
                     $this.options.success($this);
                 },
@@ -56,13 +63,6 @@ function (require, $, _, Backbone, async, twFile,
                     $this.scheduleSave();
                 }
             });
-
-            // Get a collection of plugins from options, or have the registry
-            // create a new one.
-            this.plugins = this.options.plugins || 
-                Plugins.registry.createCollection({
-                    plugin_options: { appview: this }
-                });
 
         },
 
@@ -312,6 +312,7 @@ function (require, $, _, Backbone, async, twFile,
         // #### Create and reveal an editor for this note
         revealEditor: function () {
             var editor = new NoteEditorView({
+                note_view: this,
                 model: this.model, 
                 collection: this.collection,
                 appview: this.options.appview
@@ -479,17 +480,17 @@ function (require, $, _, Backbone, async, twFile,
             '<h2></h2>',
             '<form><fieldset>',
                 '<ul>',
-                    '<li class="field"><label>Title</label>',
+                    '<li class="field title"><label>Title</label>',
                         '<input type="text" name="title" size="50" /></li>',
-                    '<li class="field"><label>Body</label>',
+                    '<li class="field body"><label>Body</label>',
                         '<textarea name="body" cols="50" rows="10"></textarea></li>',
                 '</ul>',
             '</fieldset></form>',
-            '<menu class="controls">',
-                '<button class="delete">Delete</button>',
-                '<button class="save">Save</button>',
-                '<button class="cancel">Cancel</button>',
-            '</menu>'
+            '<menu class="controls"><ul>',
+                '<li><button class="delete">Delete</button></li>',
+                '<li><button class="save">Save</button></li>',
+                '<li><button class="cancel">Cancel</button></li>',
+            '</ul></menu>'
         ].join('')
 
     });

@@ -1,18 +1,87 @@
 //
 // ## domjot markdown editor plugin
 //
-define(["jquery", "underscore", "backbone", "domjot/plugins"],
-function ($, _, Backbone, plugins) {
+define(["jquery", "underscore", "backbone", "domjot/plugins", "domjot-markdown/showdown"],
+function ($, _, Backbone, Plugins, Showdown) {
 
+    // ### Metadata for plugin
     var meta = {
         id: "domjot-markdown",
-        title: "Markdown"
+        title: "Markdown",
+        description: [
+            "Support editing of notes using Markdown"
+        ].join(' ')
     };
 
-    var Plugin = plugins.Plugin.extend({
+    // ### Plugin class
+    var Plugin = Plugins.Plugin.extend({
+
+        events: {
+            'appview editor:render': 'handleEditorRender',
+            'appview editor:serialize': 'handleEditorSerialize'
+        },
+
+        // #### Handle note editor rendering
+        // Inject the markdown editing UI on note editor rendering
+        handleEditorRender: function (app_view, editor_view) {
+
+            // Build the markdown content editor field.
+            var markdown_body = $([
+                '<li class="field body_markdown"><label>Body (markdown)</label>',
+                    '<textarea name="body_markdown" cols="50" rows="10"></textarea></li>'
+            ].join(''));
+
+            // Inject the markdown editor into the note editor.
+            editor_view.$('li.field.title').after(markdown_body);
+
+            // If this note is not new, try getting markdown source from the
+            // hidden element.
+            if (!editor_view.options.is_new) {
+                var md_src = editor_view.options.note_view.$('.markdown_src').text();
+                editor_view.$('*[name="body_markdown"]').val(md_src);
+            }
+
+        },
+        
+        // #### Handle note editor data extraction
+        // When the editor is serialized to model data, handle the markdown
+        // content management.
+        handleEditorSerialize: function (app_view, editor_view, data) {
+
+            // Grab the Markdown source from the editor, convert to HTML.
+            var src = editor_view.$('$[name=body_markdown]').val(),
+                md = new Showdown.converter(),
+                html = editor_view.options.model.filterBody(md.makeHtml(src));
+
+            // Wrap the incoming note HTML in an element, attempt to find the
+            // elements holding rendered content and markdown source.
+            var new_body = $('<div>' + data.body + '</div>'),
+                body_el = new_body.find('.markdown'),
+                src_el = new_body.find('.markdown_src');
+
+            // If rendered markdown wasn't found, inject new empty element.
+            if (0 === body_el.length) {
+                body_el = $('<div class="markdown"></div>');
+                new_body.append(body_el);
+            }
+
+            // If markdown source wasn't found, inject new empty element.
+            if (0 === src_el.length) {
+                src_el = $('<pre class="markdown_src" style="display: none"></pre>');
+                new_body.append(src_el);
+            }
+
+            // Fill in the rendered content
+            body_el.html(html);
+            // Fill in the markdown source
+            src_el.text(src);
+
+            // Turn the DOM structure back into HTML source and serialize.
+            data.body = new_body.html();
+        
+        },
         
     }, meta);
 
-    // Register the plugin and return the class
-    return plugins.registry.register(Plugin);
+    return Plugins.registry.register(Plugin);
 });

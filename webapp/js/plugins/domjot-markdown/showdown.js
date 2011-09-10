@@ -1,3 +1,4 @@
+define([], function () {
 //
 // showdown.js -- A javascript port of Markdown.
 //
@@ -1300,3 +1301,5 @@ var escapeCharacters_callback = function(wholeMatch,m1) {
 
 // export
 if (typeof exports != 'undefined') exports.Showdown = Showdown;
+return Showdown;
+});
