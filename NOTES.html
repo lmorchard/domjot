@@ -14,18 +14,32 @@
                 <hgroup>
                     <h2><a name="Index" href="#Index">Index</a></h2>
                 </hgroup>
-                <div class="body"><h3>Overview</h3>
-<p>These are some notes I'm starting to keep on DOMjot, by dogfooding it.</p>
-<p>If you're interested in the software, grab it and fork it here:</p>
-<ul><li><a href="https://github.com/lmorchard/domjot">https://github.com/lmorchard/domjot</a></li></ul>
+                <div class="body"><div class="markdown"><h3 id="overview">Overview</h3>
 
-<h3>Contents</h3>
+<p>These are some notes I'm starting to keep on DOMjot, by dogfooding it. If you're interested in the software, grab it and fork it here:</p>
+
 <ul>
-<li><a class="" href="#General_Notions">General Notions</a></li>
+<li><a href="https://github.com/lmorchard/domjot">https://github.com/lmorchard/domjot</a></li>
+</ul>
+
+<h3 id="contents">Contents</h3>
+
+<ul>
+<li><a href="#General_Notions">General Notions</a></li>
 <li><a href="#TODO">TODO</a></li>
-</ul></div>
+</ul></div><pre class="markdown_src" style="display: none;">### Overview
+
+These are some notes I'm starting to keep on DOMjot, by dogfooding it. If you're interested in the software, grab it and fork it here:
+
+* &lt;https://github.com/lmorchard/domjot&gt;
+
+### Contents
+
+* [General Notions](#General_Notions)
+* [TODO](#TODO)
+</pre></div>
             </section>
-<section class="revealed" id="note-11"><hgroup><h2><a name="General_Notions" href="#General_Notions">General Notions</a></h2></hgroup><div class="body"><p>I've got some general thoughts on how this thing should be built:</p>
+<section class="revealed" id="note-11"><hgroup><h2><a name="General_Notions" href="#General_Notions">General Notions</a></h2></hgroup><div class="body"><div class="markdown"><p>I've got some general thoughts on how this thing should be built:</p>
 
 <ul>
 <li>Documents are a microformat pattern of <a class="missingLink" href="#HTML5">HTML5</a> - eg. article containing note sections</li>
@@ -34,35 +48,57 @@
 <li>Play with media queries and making this thing work great on my Android phone</li>
 <li>Plugins driven by Backbone events</li>
 <li>The code base should eventually do interesting things in web pages, browser add-ons, and server-side apps.</li>
-</ul></div></section>
-        <section class="" id="note-7"><hgroup><h2><a name="TODO" href="#TODO">TODO</a></h2></hgroup><div class="body"><ul>
-<li><a class="" href="#Markdown_editor">Markdown editor</a></li>
+</ul></div><pre class="markdown_src" style="display: none;">I've got some general thoughts on how this thing should be built:
+
+* Documents are a microformat pattern of [HTML5](#HTML5) - eg. article containing note sections
+* Authoring UI should be considered scaffolding atop documents, easily removable and not necessary for viewing
+* Navigation augmentations (eg. search, hide/show links, sidebar listing pages) should also be optional scaffolding
+* Play with media queries and making this thing work great on my Android phone
+* Plugins driven by Backbone events
+* The code base should eventually do interesting things in web pages, browser add-ons, and server-side apps.</pre></div></section>
+        <section class="revealed" id="note-7"><hgroup><h2><a name="TODO" href="#TODO">TODO</a></h2></hgroup><div class="body"><div class="markdown"><ul>
+<li><a href="#Markdown_editor">Markdown editor</a></li>
 <li>Reveal a note on page load, if hidden note name found in the URL</li>
 <li>Bookmarklet to overlay authoring scaffolding on page</li>
 <li>S3 storage with credentials in localStorage</li>
 <li>Note reordering - drag &amp; drop? move up / down buttons?</li>
 <li>Improve <a class="missingLink" href="#HTML">HTML</a> source extraction; prettier printing, cleaner crap filtering</li>
-<li>Make more things configurable:<ul>
-    <li>Selectors to switch from article / selector to some other <a class="missingLink" href="#HTML5">HTML5</a> pattern</li>
-</ul></li>
-<li>Plugin ideas:<ul>
-    <li>Properties - a dl/dd/dt collection of name/value pairs and an editor UI</li>
-    <li>Tagging and tag searches</li>
-    <li>Search against properties, tags, titles, and body text</li>
-</ul></li>
-<li>Get things running "headless" under node.js<ul>
-<li>possibly with a simulated DOM that makes jQuery happy
-</li><li>expose documents and sections via <a class="missingLink" href="#REST">REST</a> resources
-</li><li>reuse Backbone models from client on server
-</li><li>see how much can be shared between the two, like plugins &amp; etc
-</li></ul></li>
-</ul></div></section>
+<li>Make more things configurable:
+<ul><li>Selectors to switch from article / selector to some other <a class="missingLink" href="#HTML5">HTML5</a> pattern</li></ul></li>
+<li>Plugin ideas:
+<ul><li>Properties - a dl/dd/dt collection of name/value pairs and an editor UI</li>
+<li>Tagging and tag searches</li>
+<li>Search against properties, tags, titles, and body text</li></ul></li>
+<li>Get things running "headless" under node.js
+<ul><li>possibly with a simulated DOM that makes jQuery happy</li>
+<li>expose documents and sections via <a class="missingLink" href="#REST">REST</a> resources</li>
+<li>reuse Backbone models from client on server</li>
+<li>see how much can be shared between the two, like plugins &amp; etc</li></ul></li>
+</ul></div><pre class="markdown_src" style="display: none;">* [Markdown editor](#Markdown_editor)
+* Reveal a note on page load, if hidden note name found in the URL
+* Bookmarklet to overlay authoring scaffolding on page
+* S3 storage with credentials in localStorage
+* Note reordering - drag &amp; drop? move up / down buttons?
+* Improve [HTML](#HTML) source extraction; prettier printing, cleaner crap filtering
+* Make more things configurable:
+    * Selectors to switch from article / selector to some other HTML5 pattern
+* Plugin ideas:
+    * Properties - a dl/dd/dt collection of name/value pairs and an editor UI
+    * Tagging and tag searches
+    * Search against properties, tags, titles, and body text
+* Get things running "headless" under node.js
+    * possibly with a simulated DOM that makes jQuery happy
+    * expose documents and sections via REST resources
+    * reuse Backbone models from client on server
+    * see how much can be shared between the two, like plugins &amp; etc
+</pre></div></section>
 <section class="" id="note-10"><hgroup><h2><a name="Markdown_editor" href="#Markdown_editor">Markdown editor</a></h2></hgroup><div class="body"><p>I want to build a plugin that lets me write notes with Markdown</p>
 
 <p>However, I can't find an easy way to do round-trip edits between <a class="missingLink" href="#HTML">HTML</a> and Markdown with JS. So, I might just stash Markdown source in a hidden PRE element and render to <a class="missingLink" href="#HTML">HTML</a> on save. Then, I'll load the editor from the PRE on the next edit. The main downside will be that any edits directly done to the <a class="missingLink" href="#HTML">HTML</a> will be clobbered. Probably covered by a caveat warning.</p>
 
 <p>Might be a good idea to advise plugins to store extended content outside the body content div, so that editors like this don't clobber their content.</p></div></section></article>
     
+
 
 
 

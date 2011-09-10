@@ -1,8 +1,10 @@
 //
 // ## domjot markdown editor plugin
 //
-define(["jquery", "underscore", "backbone", "domjot/plugins", "domjot-markdown/showdown"],
-function ($, _, Backbone, Plugins, Showdown) {
+define(["jquery", "underscore", "backbone", "domjot/plugins", 
+        "domjot-markdown/showdown", 
+        "domjot-markdown/jquery.taboverride"],
+function ($, _, Backbone, Plugins, Showdown, tabOverride) {
 
     // ### Metadata for plugin
     var meta = {
@@ -26,13 +28,20 @@ function ($, _, Backbone, Plugins, Showdown) {
         handleEditorRender: function (app_view, editor_view) {
 
             // Build the markdown content editor field.
+            // TODO: Stick this in CSS somewhere
             var markdown_body = $([
                 '<li class="field body_markdown"><label>Body (markdown)</label>',
-                    '<textarea name="body_markdown" cols="50" rows="10"></textarea></li>'
+                    '<textarea name="body_markdown" cols="50" rows="10" ',
+                        'style="font: 0.9em monospace; height: 25em"></textarea></li>'
             ].join(''));
 
             // Inject the markdown editor into the note editor.
             editor_view.$('li.field.title').after(markdown_body);
+
+            // Make tabs work better in the markdown field.
+            $.fn.tabOverride.setTabSize(4);
+            $.fn.tabOverride.autoIndent = true;
+            markdown_body.find('*[name="body_markdown"]').tabOverride();
 
             // If this note is not new, try getting markdown source from the
             // hidden element.
@@ -40,6 +49,10 @@ function ($, _, Backbone, Plugins, Showdown) {
                 var md_src = editor_view.options.note_view.$('.markdown_src').text();
                 editor_view.$('*[name="body_markdown"]').val(md_src);
             }
+
+            // Hide the raw HTML editor, for now.
+            // TODO: Implement a switch between markdown and raw.
+            editor_view.$('*[name="body"]').hide();
 
         },
         
