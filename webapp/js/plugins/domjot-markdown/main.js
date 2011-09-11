@@ -18,6 +18,24 @@ function ($, _, Backbone, Plugins, Showdown, tabOverride) {
     // ### Plugin class
     var Plugin = Plugins.Plugin.extend({
 
+        EDITOR_FIELD_TMPL: [
+            '<li class="field body_markdown">',
+                '<label>Body (markdown)</label>',
+                '<textarea name="body_markdown" cols="50" rows="10" ',
+                    'style="font: 0.9em monospace; height: 25em"></textarea>',
+            '</li>'
+        ].join(''),
+
+        EDITOR_CONTROLS_TMPL: [
+            '<li class="field editor_select">',
+                '<label>Editor select</label>',
+                '<menu>',
+                    '<button name="markdown">Markdown</button>',
+                    '<button name="html">HTML</button>',
+                '</menu>',
+            '</li>'
+        ].join(''),
+
         events: {
             'appview editor:render': 'handleEditorRender',
             'appview editor:serialize': 'handleEditorSerialize'
@@ -29,16 +47,13 @@ function ($, _, Backbone, Plugins, Showdown, tabOverride) {
 
             // Build the markdown content editor field.
             // TODO: Stick this in CSS somewhere
-            var markdown_body = $([
-                '<li class="field body_markdown">',
-                    '<label>Body (markdown)</label>',
-                    '<textarea name="body_markdown" cols="50" rows="10" ',
-                        'style="font: 0.9em monospace; height: 25em"></textarea>',
-                '</li>'
-            ].join(''));
+            var markdown_body = $(this.EDITOR_FIELD_TMPL);
+            var markdown_controls = $(this.EDITOR_CONTROLS_TMPL);
 
             // Inject the markdown editor into the note editor.
-            editor_view.$('li.field.title').after(markdown_body);
+            editor_view.$('li.field.title')
+                .after(markdown_body)
+                .after(markdown_controls);
 
             // Make tabs work better in the markdown field.
             $.fn.tabOverride.setTabSize(4);
@@ -52,9 +67,18 @@ function ($, _, Backbone, Plugins, Showdown, tabOverride) {
                 editor_view.$('*[name="body_markdown"]').val(md_src);
             }
 
-            // Hide the raw HTML editor, for now.
-            // TODO: Implement a switch between markdown and raw.
-            // editor_view.$('*[name="body"]').hide();
+            // Quick and dirty editor switcher
+            editor_view.$('*[name="body"]').hide();
+            markdown_controls.find('button[name="markdown"]').click(function (ev) {
+                editor_view.$('.field.body_markdown').show();
+                editor_view.$('*[name="body"]').hide();
+                return false;
+            });
+            markdown_controls.find('button[name="html"]').click(function (ev) {
+                editor_view.$('.field.body_markdown').hide();
+                editor_view.$('*[name="body"]').show();
+                return false;
+            });
 
         },
         
@@ -95,7 +119,7 @@ function ($, _, Backbone, Plugins, Showdown, tabOverride) {
             // Turn the DOM structure back into HTML source and serialize.
             data.body = new_body.html();
         
-        },
+        }
         
     }, meta);
 

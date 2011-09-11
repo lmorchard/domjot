@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5 {
     display: none;
 }
 
-menu.controls {
+menu, menu.controls {
      margin: 0pt;
      padding: 0pt;
 }

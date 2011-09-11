@@ -56,7 +56,7 @@ These are some notes I'm starting to keep on DOMjot, by dogfooding it. If you're
 * Play with media queries and making this thing work great on my Android phone
 * Plugins driven by Backbone events
 * The code base should eventually do interesting things in web pages, browser add-ons, and server-side apps.</pre></div></section>
-        <section class="" id="note-7"><hgroup><h2><a name="TODO" href="#TODO">TODO</a></h2></hgroup><div class="body"><div class="markdown"><ul>
+        <section class="revealed" id="note-7"><hgroup><h2><a name="TODO" href="#TODO">TODO</a></h2></hgroup><div class="body"><div class="markdown"><ul>
 <li><a href="#Markdown_editor">Markdown editor</a></li>
 <li>Reveal a note on page load, if hidden note name found in the URL</li>
 <li>Bookmarklet to overlay authoring scaffolding on page</li>
@@ -92,11 +92,12 @@ These are some notes I'm starting to keep on DOMjot, by dogfooding it. If you're
     * reuse Backbone models from client on server
     * see how much can be shared between the two, like plugins &amp; etc
 </pre></div></section>
-<section class="" id="note-10"><hgroup><h2><a name="Markdown_editor" href="#Markdown_editor">Markdown editor</a></h2></hgroup><div class="body"><p>I want to build a plugin that lets me write notes with Markdown</p>
+<section class="" id="note-10"><hgroup><h2><a name="Markdown_editor" href="#Markdown_editor">Markdown editor</a></h2></hgroup><div class="body"><div class="markdown"><p>I want to build a plugin that lets me write notes with Markdown</p>
 
-<p>However, I can't find an easy way to do round-trip edits between <a class="missingLink" href="#HTML">HTML</a> and Markdown with JS. So, I might just stash Markdown source in a hidden PRE element and render to <a class="missingLink" href="#HTML">HTML</a> on save. Then, I'll load the editor from the PRE on the next edit. The main downside will be that any edits directly done to the <a class="missingLink" href="#HTML">HTML</a> will be clobbered. Probably covered by a caveat warning.</p>
+<p>However, I can't find an easy way to do round-trip edits between <a class="missingLink" href="#HTML">HTML</a> and Markdown with JS. What I'm playing with is to keep the Markdown source in a hidden pre element, and render the <a class="missingLink" href="#HTML">HTML</a> into another div on save. Both will be exposed to the raw <a class="missingLink" href="#HTML">HTML</a> editor, but the Markdown plugin won't affect any other parts of the body outside of the source pre and rendered div elements.</p></div><pre class="markdown_src" style="display: none;">I want to build a plugin that lets me write notes with Markdown
 
-<p>Might be a good idea to advise plugins to store extended content outside the body content div, so that editors like this don't clobber their content.</p></div></section></article>
+However, I can't find an easy way to do round-trip edits between HTML and Markdown with JS. What I'm playing with is to keep the Markdown source in a hidden pre element, and render the HTML into another div on save. Both will be exposed to the raw HTML editor, but the Markdown plugin won't affect any other parts of the body outside of the source pre and rendered div elements.
+</pre></div></section></article>
     
 
 
