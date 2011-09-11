@@ -30,9 +30,11 @@ function ($, _, Backbone, Plugins, Showdown, tabOverride) {
             // Build the markdown content editor field.
             // TODO: Stick this in CSS somewhere
             var markdown_body = $([
-                '<li class="field body_markdown"><label>Body (markdown)</label>',
+                '<li class="field body_markdown">',
+                    '<label>Body (markdown)</label>',
                     '<textarea name="body_markdown" cols="50" rows="10" ',
-                        'style="font: 0.9em monospace; height: 25em"></textarea></li>'
+                        'style="font: 0.9em monospace; height: 25em"></textarea>',
+                '</li>'
             ].join(''));
 
             // Inject the markdown editor into the note editor.
@@ -52,7 +54,7 @@ function ($, _, Backbone, Plugins, Showdown, tabOverride) {
 
             // Hide the raw HTML editor, for now.
             // TODO: Implement a switch between markdown and raw.
-            editor_view.$('*[name="body"]').hide();
+            // editor_view.$('*[name="body"]').hide();
 
         },
         
@@ -86,6 +88,7 @@ function ($, _, Backbone, Plugins, Showdown, tabOverride) {
 
             // Fill in the rendered content
             body_el.html(html);
+
             // Fill in the markdown source
             src_el.text(src);
 
