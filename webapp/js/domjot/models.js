@@ -22,7 +22,7 @@ define(["backbone", "underscore", "async",
             };
             var unhash = function (m, m1) {
                 return blocks[m1];
-            }
+            };
             return filter_cb(s.replace(pat, hash))
                 .replace(/\~L(\d)L\~/g, unhash);
         },
